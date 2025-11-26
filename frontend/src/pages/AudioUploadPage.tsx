@@ -4,6 +4,7 @@ import { FileCard } from "../components/upload/FileCard";
 import { UploadStatus } from "../components/upload/UploadStatus";
 import { useAudioUpload } from "../hooks/useAudioUpload";
 import { useNavigate } from "react-router-dom";
+import { generatePdfReport } from "../lib/generateReport";
 
 export function AudioUploadPage() {
   const { file, setFile, status, progress, removeFile, handleUpload } = useAudioUpload();
@@ -12,6 +13,14 @@ export function AudioUploadPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 p-12">
+      
+      {/* Header */}
+      <div className="w-full text-center mb-12">
+        <h1 className="text-4xl font-bold text-white tracking-wide drop-shadow-lg">
+          Wargaming Report
+        </h1>
+      </div>
+
       <div className="grid grid-cols-3 gap-16 max-w-6xl mx-auto min-h-[80vh]">
         
         {/* Upload-Bereich mittig */}
@@ -55,7 +64,7 @@ export function AudioUploadPage() {
 
           <button
             className="h-24 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
-            onClick={() => navigate("/report")}
+            onClick={generatePdfReport}
           >
             Report
           </button>

@@ -1,0 +1,21 @@
+{
+  "total_seconds": 1123,
+  "total_formatted": "18:43",
+  "phases": {
+    "Angriff (Diskussionsgefecht)": {
+      "seconds": 509,
+      "formatted": "8:29",
+      "percentage": 45.33
+    },
+    "Aufklärung (Spionage)": {
+      "seconds": 329,
+      "formatted": "5:29",
+      "percentage": 29.3
+    },
+    "Vorbereitung (Strategie)": {
+      "seconds": 285,
+      "formatted": "4:45",
+      "percentage": 25.38
+    }
+  }
+}

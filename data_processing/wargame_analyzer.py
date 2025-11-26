@@ -6,18 +6,24 @@ from pathlib import Path
 
 class WargameAnalyzer:
     """Analyzer für Matrix-Wargame Transkripte mit OpenRouter API."""
-    
-    def __init__(self, config_path: str):
+
+    def __init__(self, config_path: str = None, api_key: str = None):
         """
-        Initialisiere Analyzer mit API Key aus Config.
-        
+        Initialisiere Analyzer mit API Key aus Config oder direkt.
+
         Args:
             config_path: Pfad zur config.json mit openrouter_api_key
+            api_key: Direkter API Key (hat Vorrang vor config_path)
         """
-        with open(config_path, "r") as f:
-            config = json.load(f)
-            self.api_key = config["openrouter_api_key"]
-        
+        if api_key:
+            self.api_key = api_key
+        elif config_path:
+            with open(config_path, "r") as f:
+                config = json.load(f)
+                self.api_key = config["openrouter_api_key"]
+        else:
+            raise ValueError("Either config_path or api_key required")
+
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -420,3 +426,184 @@ class WargameAnalyzer:
         
         # Wenn alles fehlschlägt, raise original error
         return json.loads(json_str)
+
+    # ==================== TEXT-BASIERTE METHODEN ====================
+
+    def split_rounds_from_text(
+        self,
+        transcript_text: str,
+        round_splitter_prompt: str,
+        model: str,
+        max_retries: int = 3
+    ) -> dict:
+        """
+        Analysiert Transkript-Text und gibt JSON mit Runden-Zeitstempeln zurück.
+
+        Args:
+            transcript_text: Das vollständige Transkript als String
+            round_splitter_prompt: System-Prompt Inhalt (nicht Pfad)
+            model: OpenRouter Model-ID
+            max_retries: Maximale Anzahl an Versuchen bei JSON-Fehlern
+
+        Returns:
+            Dictionary mit Runden-Info inkl. Zeitstempeln
+        """
+        messages = [
+            {"role": "system", "content": round_splitter_prompt},
+            {"role": "user", "content": transcript_text}
+        ]
+
+        for attempt in range(max_retries):
+            try:
+                payload = {
+                    "model": model,
+                    "messages": messages,
+                    "max_tokens": 150000,
+                    "temperature": 0.0
+                }
+
+                response = requests.post(
+                    self.base_url,
+                    headers=self.headers,
+                    json=payload,
+                    timeout=300
+                )
+
+                result = response.json()
+                content = result["choices"][0]["message"]["content"]
+
+                json_content = self._extract_json_from_text(content)
+                data = self._parse_json_robust(json_content)
+
+                return data
+
+            except json.JSONDecodeError as e:
+                print(f"JSON-Parse-Fehler (Versuch {attempt + 1}/{max_retries}): {e}")
+
+                if attempt < max_retries - 1:
+                    messages.append({"role": "assistant", "content": content})
+                    messages.append({
+                        "role": "user",
+                        "content": f"Das JSON war nicht valide. Fehler: {str(e)}\n\nBitte gib NUR valides JSON zurück."
+                    })
+                else:
+                    raise
+
+        return {}
+
+    def split_transcript_by_rounds_from_text(
+        self,
+        rounds_json: dict,
+        transcript_text: str
+    ) -> list:
+        """
+        Teilt Transkript-Text in separate Runden-Texte auf (in-memory).
+
+        Args:
+            rounds_json: Dictionary aus split_rounds() mit Zeitstempeln
+            transcript_text: Das vollständige Transkript als String
+
+        Returns:
+            Liste von Strings, je einer pro Runde
+        """
+        lines = transcript_text.split('\n')
+
+        # Extrahiere Zeitstempel aus rounds_json
+        round_timestamps = []
+        for key in sorted(rounds_json.keys()):
+            if key.startswith("runde_"):
+                time_range = rounds_json[key].split("[")[0].strip()
+                start_time = time_range.split("–")[0].strip() if "–" in time_range else time_range.split("—")[0].strip()
+                round_timestamps.append(start_time)
+
+        round_timestamps_sorted = sorted(round_timestamps, key=self._parse_timestamp)
+
+        # Teile Transkript auf
+        round_texts = []
+        current_round = 0
+        current_round_lines = []
+
+        for line in lines:
+            line_timestamp = self._extract_timestamp_from_line(line)
+
+            if line_timestamp is not None:
+                line_seconds = self._parse_timestamp(line_timestamp)
+
+                if current_round < len(round_timestamps_sorted) - 1:
+                    next_round_start = self._parse_timestamp(round_timestamps_sorted[current_round + 1])
+
+                    if line_seconds >= next_round_start:
+                        if current_round_lines:
+                            round_texts.append('\n'.join(current_round_lines))
+                        current_round += 1
+                        current_round_lines = []
+
+            current_round_lines.append(line)
+
+        if current_round_lines:
+            round_texts.append('\n'.join(current_round_lines))
+
+        return round_texts
+
+    def generate_report_for_round_from_text(
+        self,
+        round_number: int,
+        round_text: str,
+        system_prompt: str,
+        model: str,
+        max_retries: int = 2
+    ) -> dict:
+        """
+        Generiert einen Game Report für eine Runde aus Text.
+
+        Args:
+            round_number: Nummer der Runde
+            round_text: Der Runden-Text als String
+            system_prompt: System-Prompt Inhalt (nicht Pfad)
+            model: OpenRouter Model-ID
+            max_retries: Maximale Anzahl an Versuchen bei JSON-Fehlern
+
+        Returns:
+            Dictionary mit dem Report
+        """
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"Analysiere NUR diese Runde:\n\n{round_text}"}
+        ]
+
+        for attempt in range(max_retries):
+            try:
+                payload = {
+                    "model": model,
+                    "messages": messages,
+                    "max_tokens": 150000,
+                    "temperature": 0.1
+                }
+
+                response = requests.post(
+                    self.base_url,
+                    headers=self.headers,
+                    json=payload,
+                    timeout=300
+                )
+
+                result = response.json()
+                content = result["choices"][0]["message"]["content"]
+                json_content = self._extract_json_from_text(content)
+                parsed = self._parse_json_robust(json_content)
+
+                return parsed
+
+            except json.JSONDecodeError as e:
+                print(f"JSON-Parse-Fehler (Versuch {attempt + 1}/{max_retries}): {e}")
+
+                if attempt < max_retries - 1:
+                    messages.append({"role": "assistant", "content": content})
+                    messages.append({
+                        "role": "user",
+                        "content": f"Das JSON war nicht valide. Fehler: {str(e)}"
+                    })
+                else:
+                    raise
+
+        return {}

@@ -6,6 +6,8 @@ from typing import Dict
 
 from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
 
+from ..services.pipeline_service import PipelineService
+
 # v5_1_pipeline imports
 from v5_1_pipeline.asr.transcribe import run_transcription_words
 from v5_1_pipeline.diarization.vad import run_vad
@@ -30,7 +32,14 @@ JOBS_LOCK = asyncio.Lock()
 
 async def _set_job(job_id: str, **fields) -> Dict:
     async with JOBS_LOCK:
-        record = JOBS.get(job_id, {"status": "created", "progress": 0})
+        record = JOBS.get(job_id, {
+            "status": "created",
+            "progress": 0,
+            "phase": "transcription",
+            "transcript": None,
+            "reports": None,
+            "pipeline_error": None
+        })
         record.update(fields)
         JOBS[job_id] = record
         return record
@@ -52,7 +61,7 @@ def _format_output(utts, roles):
 
 
 async def process_audio_bytes(job_id: str, file_name: str, payload: bytes) -> None:
-    """Verarbeitet Audio-Bytes durch die v5_1_pipeline mit Progress-Updates."""
+    """Verarbeitet Audio-Bytes durch die v5_1_pipeline mit Progress-Updates, dann Pipeline."""
     tmp_path = None
     hf_token = os.environ.get("HF_TOKEN")
 
@@ -62,53 +71,91 @@ async def process_audio_bytes(job_id: str, file_name: str, payload: bytes) -> No
             tmp.write(payload)
             tmp_path = tmp.name
 
-        # Step 1: ASR (Whisper Transkription)
-        await _set_job(job_id, status="processing", progress=10, step="asr", step_name="Transkription läuft...")
+        # === TRANSKRIPTION (0-70%) ===
+
+        # Step 1: ASR (Whisper Transkription) - 7%
+        await _set_job(job_id, status="processing", progress=7, step="asr",
+                       step_name="Transkription läuft...", phase="transcription")
         words = run_transcription_words(tmp_path, model_name="large-v3")
 
-        # Step 2: VAD (Voice Activity Detection)
-        await _set_job(job_id, progress=20, step="vad", step_name="Voice Activity Detection...")
+        # Step 2: VAD (Voice Activity Detection) - 14%
+        await _set_job(job_id, progress=14, step="vad", step_name="Voice Activity Detection...")
         vad_segments = run_vad(tmp_path, hf_token=hf_token)
 
-        # Step 3: Coarse Speaker Diarization
-        await _set_job(job_id, progress=30, step="diarization", step_name="Speaker Diarization...")
+        # Step 3: Coarse Speaker Diarization - 21%
+        await _set_job(job_id, progress=21, step="diarization", step_name="Speaker Diarization...")
         coarse_segments = run_coarse_diarization(tmp_path, hf_token=hf_token)
 
-        # Step 4: Word Embeddings berechnen
-        await _set_job(job_id, progress=45, step="embeddings", step_name="Berechne Speaker Embeddings...")
+        # Step 4: Word Embeddings berechnen - 32%
+        await _set_job(job_id, progress=32, step="embeddings", step_name="Berechne Speaker Embeddings...")
         embeddings = compute_word_embeddings(words, tmp_path)
 
-        # Step 5: Clustering
-        await _set_job(job_id, progress=55, step="clustering", step_name="Clustering Sprecher...")
+        # Step 5: Clustering - 39%
+        await _set_job(job_id, progress=39, step="clustering", step_name="Clustering Sprecher...")
         raw_labels = cluster_embeddings_ahc(embeddings, coarse_segments, words)
 
-        # Step 6: Label Smoothing
-        await _set_job(job_id, progress=65, step="smoothing", step_name="Label Smoothing...")
+        # Step 6: Label Smoothing - 46%
+        await _set_job(job_id, progress=46, step="smoothing", step_name="Label Smoothing...")
         labels = smooth_labels_combined(words, raw_labels)
 
-        # Step 7: Merge Words to Utterances
-        await _set_job(job_id, progress=75, step="merge", step_name="Erstelle Utterances...")
+        # Step 7: Merge Words to Utterances - 53%
+        await _set_job(job_id, progress=53, step="merge", step_name="Erstelle Utterances...")
         utterances = merge_words_to_utterances(words, labels)
 
-        # Step 8: Text Normalization
-        await _set_job(job_id, progress=85, step="normalize", step_name="Normalisiere Text...")
+        # Step 8: Text Normalization - 60%
+        await _set_job(job_id, progress=60, step="normalize", step_name="Normalisiere Text...")
         normalized_utterances = normalize_utterances(utterances)
 
-        # Step 9: Role Inference
-        await _set_job(job_id, progress=95, step="roles", step_name="Erkenne Rollen...")
+        # Step 9: Role Inference - 67%
+        await _set_job(job_id, progress=67, step="roles", step_name="Erkenne Rollen...")
         roles = infer_roles(normalized_utterances)
 
-        # Step 10: Format Output
-        result = _format_output(normalized_utterances, roles)
-
+        # Step 10: Format Output - 70%
+        transcript = _format_output(normalized_utterances, roles)
         await _set_job(
             job_id,
-            status="completed",
-            progress=100,
-            step="done",
-            step_name="Fertig",
-            result=result
+            progress=70,
+            step="transcription_done",
+            step_name="Transkription abgeschlossen",
+            phase="analysis",
+            transcript=transcript
         )
+
+        # === DATA PROCESSING PIPELINE (70-100%) ===
+        try:
+            pipeline = PipelineService()
+
+            async def progress_update(pct: int, step: str, name: str):
+                await _set_job(job_id, progress=pct, step=step, step_name=name)
+
+            reports = await pipeline.run_pipeline(transcript, progress_update)
+
+            # Check for partial failures
+            has_errors = bool(reports.get("errors"))
+            status = "partial_success" if has_errors else "completed"
+
+            await _set_job(
+                job_id,
+                status=status,
+                progress=100,
+                step="done",
+                step_name="Fertig",
+                result=transcript,
+                reports=reports,
+                pipeline_error="; ".join(reports.get("errors", [])) if has_errors else None
+            )
+
+        except Exception as pipeline_exc:
+            # Pipeline failed but transcript succeeded
+            await _set_job(
+                job_id,
+                status="partial_success",
+                progress=100,
+                step="pipeline_failed",
+                step_name="Pipeline fehlgeschlagen",
+                result=transcript,
+                pipeline_error=str(pipeline_exc)
+            )
 
     except Exception as exc:
         await _set_job(job_id, status="failed", error=str(exc))
@@ -143,3 +190,25 @@ async def get_audio_progress(job_id: str):
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     return job
+
+
+@router.get("/report/{job_id}")
+async def get_report(job_id: str):
+    """Get the generated reports for a completed job."""
+    job = await _get_job(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    if job["status"] not in ["completed", "partial_success"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Job not ready. Current status: {job['status']}"
+        )
+
+    return {
+        "job_id": job_id,
+        "status": job["status"],
+        "transcript": job.get("result"),
+        "reports": job.get("reports"),
+        "pipeline_error": job.get("pipeline_error")
+    }

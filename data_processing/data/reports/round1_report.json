@@ -1,0 +1,276 @@
+{
+  "game_metadata": {
+    "game_id": "op4c_hackathon_2024",
+    "date": "2024-01-01",
+    "duration_minutes": 20,
+    "participants": {
+      "team_red": {
+        "players": [
+          "Clara"
+        ],
+        "role": "Angreifer"
+      },
+      "team_blue": {
+        "players": [
+          "Antonio"
+        ],
+        "role": "Verteidiger"
+      },
+      "game_master": {
+        "name": "Moderator"
+      }
+    },
+    "scenario": {
+      "target": "Hackathon der BWI",
+      "red_objective": "Störung und Sabotage des Hackathons",
+      "blue_objective": "Verteidigung und Durchführung des Hackathons"
+    }
+  },
+  "rounds": [
+    {
+      "round_number": 1,
+      "timestamp_start": "00:00",
+      "timestamp_end": "19:00",
+      "phase_1_aufklaerung": {
+        "phase_name": "Aufklärung (Spionage)",
+        "timestamp_start": "03:14",
+        "timestamp_end": "04:39",
+        "description": "Rot betreibt Spionage um Schwachstellen zu identifizieren, Blau versucht zu kontern",
+        "blue_counter_intelligence": {
+          "what_is_rolled": "Blau würfelt 3W6 und versucht >= 12 zu erreichen um Rot's Spionage zu erkennen",
+          "dice_results": [
+            3,
+            4,
+            3
+          ],
+          "total": 10,
+          "threshold": 12,
+          "success": false,
+          "what_happened": "Blau konnte die Spionage nicht aufdecken",
+          "visibility_consequence": "Spionage bleibt geheim",
+          "transcript_quote": "Eine 10 gewürfelt, Pech gehabt, nicht geklappt."
+        },
+        "red_espionage": {
+          "what_is_rolled": "Rot würfelt 2W6 um Qualität und Art der Intelligence zu bestimmen",
+          "dice_results": [
+            1,
+            0
+          ],
+          "intelligence_gained": {
+            "vulnerabilities_identified": [
+              "Nachlässiger Umgang mit Laptop-Sicherheit"
+            ],
+            "information_obtained": "Beobachtung von Christians Verhaltensmustern beim Verlassen des Arbeitsplatzes",
+            "how_exploited_later": "Ausnutzung des ungesperrten Laptops für Mail-Versand"
+          },
+          "visibility": "geheim",
+          "transcript_quote": "Jawohl, x-Achse ist eine 1."
+        }
+      },
+      "phase_2_angriff": {
+        "phase_name": "Angriff (Diskussionsgefecht)",
+        "timestamp_start": "04:45",
+        "timestamp_end": "18:59",
+        "description": "Rot führt Angriff durch, beide Teams diskutieren entlang 4 Dimensionen",
+        "attack_announcement": {
+          "category_revealed": "Cyber",
+          "target": "Hackathon-Kommunikation",
+          "method": "Versenden falscher Standortinformationen über kompromittierten Mail-Account",
+          "how_intelligence_exploited": "Ausnutzung des ungesperrten Laptops des Organisators Christian",
+          "transcript_quote": "Aufgrund von Unnachsichtigkeit konnte ich an die Mail-Zugangsdaten von dem Organisator Christian gelangen und verbreite am Freitagabend kurz vor dem Event widersprüchliche Informationen zum Auftragungsort des Hackathons"
+        },
+        "dimension_1_resources": {
+          "dimension_name": "Ressourcen (Kosten/Aufwand für Rot)",
+          "red_arguments": [
+            {
+              "argument": "Minimaler Ressourcenaufwand durch Ausnutzung eines bereits vorhandenen Innentäters",
+              "reasoning": "Kein technischer Aufwand nötig, nur Timing und Zugang",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "Also, dadurch dass der Organisator Christian war, wie gesagt, sehr nachlässig beim Sperren seines Laptops, und ich konnte, ohne große Mühe, konnte ich mir einfach Zugang zu seinem Laptop verschaffen",
+              "timestamp": "07:11"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Aufwand für Observation und Timing ist nicht zu unterschätzen",
+              "reasoning": "Mehrere Variablen müssen koordiniert werden",
+              "quality": "moderat",
+              "tone": "analytical",
+              "transcript_quote": "Aber wie wahrscheinlich ist es denn, dass er wirklich seinen Laptop anlässt?",
+              "timestamp": "07:53"
+            }
+          ],
+          "game_master_rating": "S",
+          "points_for_red": 1,
+          "rationale": "Minimaler Ressourcenaufwand durch vorhandenen Innentäter"
+        },
+        "dimension_2_defense": {
+          "dimension_name": "Verteidigung (Qualität von Blau's Maßnahmen)",
+          "red_arguments": [
+            {
+              "argument": "Weiche Faktoren bei Sicherheitsmaßnahmen",
+              "reasoning": "Sensibilisierung allein reicht nicht",
+              "quality": "moderat",
+              "tone": "analytical",
+              "transcript_quote": "Das sind aber halt sehr weiche Faktoren, würde ich sagen",
+              "timestamp": "12:03"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Mehrheit der Mitarbeiter sperrt Laptops und nutzt PKI-Karten",
+              "reasoning": "Etablierte Sicherheitskultur",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "Also ich persönlich würde sagen, dass die Mehrheit auf jeden Fall ihre Laptops sperrt",
+              "timestamp": "12:36"
+            }
+          ],
+          "game_master_rating": "L",
+          "points_for_red": 3,
+          "rationale": "Gute Sicherheitskultur und etablierte Maßnahmen"
+        },
+        "dimension_3_complexity": {
+          "dimension_name": "Komplexität (Schwierigkeit für Rot)",
+          "red_arguments": [
+            {
+              "argument": "Vorbereitete Texte über Pastebin nutzbar",
+              "reasoning": "Schnelles Copy-Paste möglich",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "Über solche, ja, Techniken verfügt, also weißer Staatselektor natürlich",
+              "timestamp": "14:33"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Zeitkritische Operation mit vielen Variablen",
+              "reasoning": "Mail muss authentisch sein und schnell geschrieben werden",
+              "quality": "stark",
+              "tone": "analytical",
+              "transcript_quote": "Die E-Mail muss ja auch erstmal geschrieben werden. Das heißt ja, das muss ja sicher sein",
+              "timestamp": "13:43"
+            }
+          ],
+          "game_master_rating": "M",
+          "points_for_red": 2,
+          "rationale": "Moderate Komplexität durch Timing und Koordination"
+        },
+        "dimension_4_attack": {
+          "dimension_name": "Auswirkung (Schadenspotenzial)",
+          "red_arguments": [
+            {
+              "argument": "Massive Verwirrung und Frustration bei Teilnehmern",
+              "reasoning": "Teilnehmer an verschiedenen Standorten",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "Es führt zu Verwirrung und auch Frustration, weil nicht viele wissen, was sie jetzt machen sollen",
+              "timestamp": "05:41"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Zeitfenster für Gegemaßnahmen vorhanden",
+              "reasoning": "Mehrere Tage bis zur vollen Wirkung",
+              "quality": "moderat",
+              "tone": "analytical",
+              "transcript_quote": "Vorausgesetzt natürlich, niemand öffnet seine E-Mails",
+              "timestamp": "16:42"
+            }
+          ],
+          "game_master_rating": "M",
+          "points_for_red": 2,
+          "rationale": "Spürbare aber nicht katastrophale Auswirkungen"
+        },
+        "success_roll": {
+          "threshold": 8,
+          "dice_results": [
+            3,
+            4,
+            3
+          ],
+          "dice_total": 10,
+          "success": true,
+          "margin": 2,
+          "result_type": "Knapper Erfolg",
+          "what_happened": "Angriff erfolgreich durchgeführt, falsche Standortinformationen versendet",
+          "transcript_quote": "Clara hat ihr Würfelglück. Wie erwartet und wie immer."
+        }
+      }
+    }
+  ],
+  "game_summary": {
+    "rounds_overview": [
+      {
+        "round_number": 1,
+        "attack_category": "Cyber",
+        "attack_successful": true,
+        "key_impact": "Verwirrung über Veranstaltungsort des Hackathons"
+      }
+    ],
+    "espionage_effectiveness": [
+      {
+        "round_number": 1,
+        "red_intelligence_quality": "niedrig",
+        "blue_counter_success": false,
+        "impact_on_attack": "Ermöglichte gezielte Ausnutzung von Verhaltensmustern"
+      }
+    ],
+    "defense_measures": {
+      "blue_strengths": [
+        "Etablierte Sicherheitskultur",
+        "PKI-Karten-Nutzung"
+      ],
+      "blue_weaknesses": [
+        "Einzelne nachlässige Mitarbeiter",
+        "Keine technische Durchsetzung von Sperrzeiten"
+      ],
+      "most_effective_defense": "Sensibilisierung der Mitarbeiter für Laptop-Sicherheit"
+    },
+    "attack_progression": {
+      "red_strategy_evolution": "Ausnutzung menschlicher Schwächen statt technischer Angriffe",
+      "most_effective_attack": "Social Engineering durch Innentäter",
+      "red_weaknesses_exposed": [
+        "Abhängigkeit von Timing",
+        "Begrenzte Zeitfenster für Durchführung"
+      ]
+    },
+    "vulnerabilities_identified": [
+      {
+        "vulnerability": "Ungesperrte Laptops bei Kaffeepausen",
+        "exploited_in_round": 1,
+        "effectiveness": "hoch"
+      }
+    ],
+    "lessons_learned": {
+      "for_red_team": [
+        "Menschliche Schwächen effektiver als technische Angriffe",
+        "Timing und Vorbereitung kritisch für Erfolg"
+      ],
+      "for_blue_team": [
+        "Konsequente Durchsetzung von Sicherheitsrichtlinien nötig",
+        "Bessere Kontrolle von Laptop-Sperrzeiten erforderlich"
+      ],
+      "for_game_design": [
+        "Social Engineering Aspekte gut abbildbar"
+      ]
+    },
+    "key_moments": [
+      {
+        "timestamp": "03:14",
+        "phase": "Aufklärung",
+        "round": 1,
+        "description": "Blau verfehlt Counter-Intelligence Wurf",
+        "significance": "Ermöglichte verdeckte Spionage"
+      },
+      {
+        "timestamp": "17:45",
+        "phase": "Angriff",
+        "round": 1,
+        "description": "Erfolgreicher Angriffswurf mit 10 vs. 8",
+        "significance": "Bestätigung des erfolgreichen Social Engineering Angriffs"
+      }
+    ]
+  }
+}

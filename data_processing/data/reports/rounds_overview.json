@@ -1,0 +1,5 @@
+{
+  "runde_1": "00:00–00:16 Speaker 0 (Moderator): \"Schönen guten Morgen, Antonio, Clara. Heute ist Op4C geplant. Hier führen wir einen Angriff gegen das Hackathon durch.\"[...]03:09–03:14 Speaker 0 (Moderator): \"Also dann würde ich sagen, beginnen wir gleich mit der ersten Phase.\"[...]06:13–06:14 Speaker 1: \"Und das ist auch sehr zerstreut.\"[...]19:17–19:21 Speaker 0 (Moderator): \"Und auch hier darf Blau jetzt wieder drei Würfel würfeln.\"",
+  "runde_2": "19:21–19:23 Speaker 0 (Moderator): \"Bitte einmal kurz würfeln.\"[...]32:46–32:48 Speaker 1: \"Vielen Dank, Jonas. Auf Wiedersehen.\"[...]32:48–32:50 Speaker 0 (Moderator): \"Dankeschön.\"",
+  "cut_reasoning": "Der Schnitt wurde bei 19:21 gesetzt, da hier explizit die zweite Runde mit einem neuen Würfelwurf für die Aufklärungsphase beginnt. Dies markiert klar den Übergang von der ersten zur zweiten Spielrunde. Zudem beginnt hier ein neuer Angriff (Wasserrohr) nach dem ersten Angriff (Fake-Emails)."
+}

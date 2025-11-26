@@ -32,7 +32,7 @@ export function UploadZone({ onFileSelect, isDragging, setIsDragging }: Props) {
         ${
           isDragging
             ? "border-red-500 bg-red-900/20"
-            : "border-gray-600 bg-[#0E1621]"
+            : "border-gray-600 bg-[#464646]"
         }
       `}
     >

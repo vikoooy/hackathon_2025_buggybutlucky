@@ -12,11 +12,11 @@ export function AudioUploadPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#0E1621] p-12 text-white">
+    <div className="min-h-screen bg-[#949494] p-12 text-white">
       {/* Header */}
       <div className="w-full text-center mb-12">
         <h1 className="text-4xl font-bold text-white drop-shadow-lg">
-          BWI Report Portal
+          Wargaming Report Portal
         </h1>
       </div>
 

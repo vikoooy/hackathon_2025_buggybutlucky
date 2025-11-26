@@ -67,6 +67,18 @@ Dieses Projekt analysiert Audio-Aufnahmen von Matrix Wargame Sessions und erstel
             └─────────────────┘
 ```
 
+## Modell-Übersicht
+
+| Modell | Lizenz | Verwendungszweck |
+|--------|--------|------------------|
+| **Whisper Large-v3** (faster-whisper) | MIT | Automatische Spracherkennung (ASR) - Audio → Text |
+| **pyannote/speaker-diarization** | MIT | Grobe Sprechererkennung & Clustering |
+| **pyannote/vad** | MIT | Voice Activity Detection (VAD) |
+| **SpeechBrain ECAPA-TDNN** | Apache 2.0 | Speaker Embeddings (192-dim Vektoren) |
+| **Claude 3.5 Sonnet** (OpenRouter) | Proprietär | KI-gestützte Spielanalyse & Report-Generierung |
+| **GPT-4o** (OpenRouter) | Proprietär | Alternative für KI-Analyse (optional) |
+| **PyTorch** (CUDA 12.1) | BSD-3-Clause | Deep Learning Framework für alle Modelle |
+
 ## Komponenten-Übersicht
 
 | Komponente | Technologie | Hauptfunktion | Status |

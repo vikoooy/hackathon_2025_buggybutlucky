@@ -1,0 +1,44 @@
+{
+  "red_arguments": {
+    "total": 6,
+    "tone": {
+      "selbstsicher": {
+        "count": 2,
+        "percentage": 33.33
+      },
+      "sachlich": {
+        "count": 1,
+        "percentage": 16.67
+      },
+      "analytisch": {
+        "count": 1,
+        "percentage": 16.67
+      },
+      "technisch": {
+        "count": 1,
+        "percentage": 16.67
+      },
+      "strategisch": {
+        "count": 1,
+        "percentage": 16.67
+      }
+    }
+  },
+  "blue_arguments": {
+    "total": 4,
+    "tone": {
+      "skeptisch": {
+        "count": 2,
+        "percentage": 50.0
+      },
+      "überzeugt": {
+        "count": 1,
+        "percentage": 25.0
+      },
+      "kritisch": {
+        "count": 1,
+        "percentage": 25.0
+      }
+    }
+  }
+}

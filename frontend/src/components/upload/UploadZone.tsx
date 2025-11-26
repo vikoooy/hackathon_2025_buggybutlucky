@@ -3,56 +3,62 @@ import { Upload } from "lucide-react";
 interface Props {
   onFileSelect: (file: File) => void;
   isDragging: boolean;
-  setIsDragging: (b: boolean) => void;
+  setIsDragging: (v: boolean) => void;
 }
 
 export function UploadZone({ onFileSelect, isDragging, setIsDragging }: Props) {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) onFileSelect(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) onFileSelect(file);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const f = e.dataTransfer.files?.[0];
-    if (f) onFileSelect(f);
     setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) onFileSelect(file);
   };
 
   return (
     <div
-      className={`
-        border-2 border-dashed rounded-xl p-10 text-center cursor-pointer
-        transition-all duration-300 bg-slate-900/40
-        hover:bg-slate-900/70 hover:border-emerald-500
-        ${isDragging ? "border-emerald-500 bg-emerald-900/20 scale-[1.02]" : "border-slate-700"}
-      `}
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragging(true);
       }}
-      onDragLeave={(e) => {
-        e.preventDefault();
-        setIsDragging(false);
-      }}
+      onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
+      className={`
+        border-2 border-dashed rounded-xl p-8 text-center transition 
+        ${
+          isDragging
+            ? "border-red-500 bg-red-900/20"
+            : "border-gray-600 bg-[#0E1621]"
+        }
+      `}
     >
       <input
         type="file"
         accept="audio/*"
         onChange={handleFileInput}
         className="hidden"
-        id="audio-file"
+        id="file-input"
       />
 
-      <div
-        className="w-24 h-24 mx-auto mb-6 rounded-full bg-emerald-800/60 flex items-center justify-center"
-        onClick={() => document.getElementById("audio-file")?.click()}
-      >
-        <Upload className="w-12 h-12 text-white" />
-      </div>
+      <div className="flex flex-col items-center gap-4">
+        <div className="p-4 bg-red-600 rounded-full">
+          <Upload className="w-10 h-10 text-white" />
+        </div>
 
-      <p className="text-white text-lg font-semibold">Audio-Datei hochladen</p>
-      <p className="text-gray-400 text-sm mt-2">Drag & Drop oder Datei wählen</p>
+        <h3 className="text-white font-semibold text-lg">Audio-Datei hochladen</h3>
+        <p className="text-gray-300 text-sm">Drag & Drop oder Datei wählen</p>
+
+        <button
+          onClick={() => document.getElementById("file-input")?.click()}
+          className="mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md"
+        >
+          Datei wählen
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,22 +1,23 @@
-export function UploadStatus({
-  status,
-  progress,
-}: {
+interface Props {
   status: string;
   progress: number;
-}) {
-  if (status === "idle") return null;
+}
 
+export function UploadStatus({ status, progress }: Props) {
   return (
-    <div className="mt-6 bg-slate-800/70 p-4 rounded-lg border border-slate-700">
-      <p className="text-white text-sm mb-2">
-        Status: <span className="font-semibold">{status}</span>
-      </p>
+    <div className="mt-4 bg-gray-800 p-4 rounded-lg text-white">
+      <p>Status: {status}</p>
 
-      {(status === "processing" || status === "uploading") && (
-        <p className="text-white text-sm">
-          Fortschritt: <span className="font-semibold">{progress}%</span>
-        </p>
+      {(status === "uploading" || status === "processing") && (
+        <div className="mt-2">
+          <div className="w-full h-3 bg-gray-600 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-red-500 transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <p className="mt-1 text-sm text-gray-400">{progress}%</p>
+        </div>
       )}
     </div>
   );

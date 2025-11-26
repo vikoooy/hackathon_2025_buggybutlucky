@@ -12,18 +12,16 @@ export function AudioUploadPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 p-12">
-      
+    <div className="min-h-screen bg-[#0E1621] p-12 text-white">
       {/* Header */}
       <div className="w-full text-center mb-12">
-        <h1 className="text-4xl font-bold text-white tracking-wide drop-shadow-lg">
-          Wargaming Report
+        <h1 className="text-4xl font-bold text-white drop-shadow-lg">
+          BWI Report Portal
         </h1>
       </div>
 
       <div className="grid grid-cols-3 gap-16 max-w-6xl mx-auto min-h-[80vh]">
-        
-        {/* Upload-Bereich mittig */}
+        {/* Upload-Bereich */}
         <div className="col-span-1 flex items-center justify-center">
           <div className="w-full max-w-sm">
             {!file ? (
@@ -31,12 +29,13 @@ export function AudioUploadPage() {
                 onFileSelect={setFile}
                 isDragging={isDragging}
                 setIsDragging={setIsDragging}
+                // optional: passe UploadZone-Farben an
               />
             ) : (
               <>
                 <FileCard file={file} onRemove={removeFile} />
                 <button
-                  className="mt-4 w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-semibold transition"
+                  className="mt-4 w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition"
                   onClick={handleUpload}
                   disabled={status === "uploading" || status === "processing"}
                 >
@@ -53,24 +52,24 @@ export function AudioUploadPage() {
           </div>
         </div>
 
-        {/* Rechte zwei Drittel – Buttons */}
-        <div className="col-span-2 flex flex-col justify-center gap-6">
+        {/* Rechte Buttons */}
+        <div className="col-span-2 flex flex-col justify-center gap-4 pr-4">
           <button
-            className="h-24 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
+            className="h-20 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
             onClick={() => navigate("/dashboard")}
           >
             View Dashboard
           </button>
 
           <button
-            className="h-24 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
+            className="h-20 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
             onClick={generatePdfReport}
           >
             Report
           </button>
 
           <button
-            className="h-24 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
+            className="h-20 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
             onClick={() => navigate("/view-x")}
           >
             View X

@@ -1,0 +1,342 @@
+{
+  "game_metadata": {
+    "game_id": "op4c_hackathon_1",
+    "date": "2024-01-24",
+    "duration_minutes": 19,
+    "participants": {
+      "team_red": {
+        "players": [
+          "Antonio"
+        ],
+        "role": "Angreifer"
+      },
+      "team_blue": {
+        "players": [
+          "Clara"
+        ],
+        "role": "Verteidiger"
+      },
+      "game_master": {
+        "name": "Moderator"
+      }
+    },
+    "scenario": {
+      "target": "Hackathon-Event",
+      "red_objective": "Erfolgreicher Angriff auf Hackathon",
+      "blue_objective": "Verteidigung des Hackathon-Events"
+    }
+  },
+  "rounds": [
+    {
+      "round_number": 1,
+      "timestamp_start": "00:00",
+      "timestamp_end": "18:59",
+      "phase_1_aufklaerung": {
+        "phase_name": "Aufklärung (Spionage)",
+        "timestamp_start": "00:16",
+        "timestamp_end": "05:45",
+        "description": "Rot betreibt Spionage um Schwachstellen zu identifizieren, Blau versucht zu kontern",
+        "blue_counter_intelligence": {
+          "what_is_rolled": "Blau würfelt 3W6 und versucht >= 12 zu erreichen um Rot's Spionage zu erkennen und offenzulegen",
+          "dice_results": [
+            3,
+            4,
+            2
+          ],
+          "total": 9,
+          "threshold": 12,
+          "success": false,
+          "what_happened": "Blau erreicht nicht die erforderliche Schwelle von 12, Counter-Intelligence scheitert",
+          "consequence": "Rot's Spionageergebnisse bleiben geheim",
+          "transcript_quote": "Clara würfelt... 3, 4 und 2, macht 9. Das reicht leider nicht."
+        },
+        "red_espionage": {
+          "what_is_rolled": "Rot würfelt 2W6 um Spionage-Qualität zu bestimmen",
+          "first_roll": 5,
+          "second_roll": 6,
+          "total": 11,
+          "espionage_results": {
+            "identified_vulnerabilities": [
+              "Müde Teilnehmer vor Hackathon",
+              "Begrenzte Sicherheitsmaßnahmen im Vorfeld",
+              "Vorhersehbare Teilnehmerroutinen"
+            ],
+            "intelligence_gathered": "Teilnehmer ruhen sich üblicherweise vor dem Event aus, reduzierte Wachsamkeit",
+            "advantage_gained": "Kenntnis der Vorbereitungsphase und Teilnehmergewohnheiten"
+          },
+          "visibility": "geheim",
+          "transcript_quote": "Antonio würfelt... 5 und 6. Sehr gut, das gibt uns wichtige Einblicke in die Vorbereitungsphase."
+        }
+      },
+      "phase_2_vorbereitung": {
+        "phase_name": "Vorbereitung (Strategie)",
+        "timestamp_start": "05:45",
+        "timestamp_end": "10:30",
+        "description": "Rot entwickelt Angriffsstrategie, Blau versucht zu antizipieren",
+        "red_attack_planning": {
+          "timestamp": "06:00",
+          "attack_category": "Cyber",
+          "attack_strategy": {
+            "target": "Teilnehmer-Laptops vor Hackathon",
+            "method": "Automatisierte Malware-Distribution über kompromittierte Update-Server",
+            "rationale": "Ausnutzung der reduzierten Wachsamkeit in der Vorbereitungsphase",
+            "expected_outcome": "Vorinstallierte Malware auf Teilnehmer-Systemen vor Eventbeginn"
+          },
+          "visibility": "geheim",
+          "transcript_quote": "Wir nutzen die Zeit vor dem Event, wenn alle entspannt sind."
+        },
+        "blue_scenario_anticipation": {
+          "timestamp": "08:15",
+          "scenario_1": {
+            "anticipated_target": "Event-Infrastruktur",
+            "anticipated_method": "DDoS-Angriff während des Events",
+            "rationale": "Maximale Störung während des Hackathons",
+            "matches_actual_attack": false
+          },
+          "scenario_2": {
+            "anticipated_target": "Teilnehmer-Systeme",
+            "anticipated_method": "Malware vor Event",
+            "rationale": "Vorbereitung vor dem eigentlichen Event",
+            "matches_actual_attack": true
+          },
+          "anticipation_bonus_earned": true,
+          "bonus_value": 0,
+          "transcript_quote": "Sie könnten auch versuchen, schon vorher die Systeme zu infiltrieren."
+        }
+      },
+      "phase_3_angriff": {
+        "phase_name": "Angriff (Diskussionsgefecht)",
+        "timestamp_start": "10:30",
+        "timestamp_end": "18:59",
+        "description": "Rot führt Angriff durch, strukturierte Diskussion entlang 4 Dimensionen",
+        "attack_execution": {
+          "timestamp": "10:45",
+          "attack_category_revealed": "Cyber",
+          "attack_target": "Teilnehmer-Laptops",
+          "attack_method": "Automatisierte Malware über Update-Server",
+          "how_vulnerabilities_exploited": "Ausnutzung der reduzierten Wachsamkeit vor dem Event",
+          "transcript_quote": "Wir greifen die Systeme an, wenn die Teilnehmer sich ausruhen."
+        },
+        "dimensions_attack": [
+          {
+            "dimension_name": "Ressourcen",
+            "timestamp_start": "11:00",
+            "timestamp_end": "12:30",
+            "description": "Kosten/Aufwand des Angriffs für Rot",
+            "red_arguments": [
+              {
+                "argument": "Automatisierte Malware-Verteilung benötigt minimale Ressourcen",
+                "reasoning": "Einmal entwickelt, läuft System automatisch",
+                "quality": "stark",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Die Automatisierung macht es sehr effizient.",
+                "timestamp": "11:15"
+              },
+              {
+                "argument": "Vorhandene Exploit-Kits können genutzt werden",
+                "reasoning": "Keine Entwicklung von Grund auf nötig",
+                "quality": "mittel",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Wir können existierende Tools anpassen.",
+                "timestamp": "11:45"
+              }
+            ],
+            "blue_arguments": [
+              {
+                "argument": "Update-Server-Kompromittierung erfordert erhebliche Ressourcen",
+                "reasoning": "Hochsichere Systeme mit mehreren Schutzschichten",
+                "quality": "stark",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Update-Server sind sehr gut geschützt.",
+                "timestamp": "12:00"
+              },
+              {
+                "argument": "Kontinuierliche Überwachung nötig",
+                "reasoning": "Personal muss 24/7 bereitstehen",
+                "quality": "mittel",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Sie brauchen konstante Überwachung.",
+                "timestamp": "12:15"
+              }
+            ],
+            "evaluation": {
+              "rating": "M",
+              "points_for_red": 2,
+              "rationale": "Moderate Ressourcenanforderung durch Automatisierung, aber initiale Entwicklung nötig",
+              "awarded_to": "Rot",
+              "game_master_summary": "Automatisierung reduziert Aufwand erheblich",
+              "impact_on_total": "+2 zur Schwelle"
+            }
+          },
+          {
+            "dimension_name": "Verteidigung",
+            "timestamp_start": "12:30",
+            "timestamp_end": "14:45",
+            "description": "Qualität der Verteidigungsmaßnahmen von Blau",
+            "red_arguments": [
+              {
+                "argument": "Teilnehmer sind in Vorbereitungsphase weniger wachsam",
+                "reasoning": "Fokus liegt auf Erholung vor Event",
+                "quality": "stark",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Niemand prüft Updates genau vor dem Event.",
+                "timestamp": "13:00"
+              },
+              {
+                "argument": "Standard-Antivirenprogramme erkennen modifizierte Malware nicht",
+                "reasoning": "Angepasster Code umgeht Signaturen",
+                "quality": "mittel",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Unsere Malware ist nicht in den Datenbanken.",
+                "timestamp": "13:30"
+              }
+            ],
+            "blue_arguments": [
+              {
+                "argument": "Update-Signaturen werden geprüft",
+                "reasoning": "Automatische Validierung aller Updates",
+                "quality": "stark",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Updates werden kryptographisch verifiziert.",
+                "timestamp": "14:00"
+              },
+              {
+                "argument": "Verhaltensbasierte Erkennung aktiv",
+                "reasoning": "Nicht nur signaturbasierte Verteidigung",
+                "quality": "mittel",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Wir haben verhaltensbasierte Systeme.",
+                "timestamp": "14:15"
+              }
+            ],
+            "evaluation": {
+              "rating": "L",
+              "points_for_red": 3,
+              "rationale": "Technische Verteidigung stark, menschlicher Faktor schwächt",
+              "awarded_to": "Blau",
+              "game_master_summary": "Gute technische Maßnahmen vorhanden",
+              "impact_on_total": "+3 zur Schwelle"
+            }
+          },
+          {
+            "dimension_name": "Angriffskomplexität",
+            "timestamp_start": "14:45",
+            "timestamp_end": "16:45",
+            "description": "Komplexität und Koordinationsaufwand des Angriffs",
+            "red_arguments": [
+              {
+                "argument": "Einmal entwickelt läuft System automatisch",
+                "reasoning": "Keine komplexe Koordination nötig",
+                "quality": "stark",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Das System arbeitet selbstständig.",
+                "timestamp": "15:00"
+              },
+              {
+                "argument": "Bekannte Exploits werden nur modifiziert",
+                "reasoning": "Keine komplexe Neuentwicklung",
+                "quality": "mittel",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Wir passen existierende Tools an.",
+                "timestamp": "15:30"
+              }
+            ],
+            "blue_arguments": [
+              {
+                "argument": "Update-Server-Kompromittierung hochkomplex",
+                "reasoning": "Mehrschichtige Sicherheit umgehen",
+                "quality": "stark",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Die Server-Infrastruktur ist sehr komplex.",
+                "timestamp": "16:00"
+              },
+              {
+                "argument": "Timing muss perfekt sein",
+                "reasoning": "Enger Zeitrahmen vor Event",
+                "quality": "mittel",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Das Timing ist kritisch.",
+                "timestamp": "16:15"
+              }
+            ],
+            "evaluation": {
+              "rating": "L",
+              "points_for_red": 3,
+              "rationale": "Hohe technische Komplexität trotz Automatisierung",
+              "awarded_to": "Blau",
+              "game_master_summary": "Komplexe Infrastruktur erfordert viel Know-how",
+              "impact_on_total": "+3 zur Schwelle"
+            }
+          },
+          {
+            "dimension_name": "Reaktionszeitfenster",
+            "timestamp_start": "16:45",
+            "timestamp_end": "18:59",
+            "description": "Zeit die Blau zur Reaktion hat",
+            "red_arguments": [
+              {
+                "argument": "Angriff erfolgt wenn Teilnehmer sich ausruhen",
+                "reasoning": "Minimale Aufmerksamkeit vor Event",
+                "quality": "stark",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Sie wollen sich ja ausruhen vor dem Event.",
+                "timestamp": "17:00"
+              },
+              {
+                "argument": "Malware wird erst beim Event aktiv",
+                "reasoning": "Keine frühen Warnsignale",
+                "quality": "stark",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Die Aktivierung erfolgt erst beim Hackathon.",
+                "timestamp": "17:30"
+              }
+            ],
+            "blue_arguments": [
+              {
+                "argument": "Automatische Erkennungssysteme arbeiten 24/7",
+                "reasoning": "Unabhängig von menschlicher Aufmerksamkeit",
+                "quality": "mittel",
+                "emotional_tone": "sachlich",
+                "transcript_quote": "Unsere Systeme laufen rund um die Uhr.",
+                "timestamp": "18:00"
+              },
+              {
+                "argument": "Update-Logs werden analysiert",
+                "reasoning": "Nachträgliche Erkennung möglich",
+                "quality": "schwach",
+                "emotional_tone": "defensiv",
+                "transcript_quote": "Wir können Updates nachverfolgen.",
+                "timestamp": "18:30"
+              }
+            ],
+            "evaluation": {
+              "rating": "S",
+              "points_for_red": 1,
+              "rationale": "Sehr geringes Reaktionszeitfenster durch geschicktes Timing",
+              "awarded_to": "Rot",
+              "game_master_summary": "Kaum Zeit zur Reaktion vor Event",
+              "impact_on_total": "+1 zur Schwelle"
+            }
+          }
+        ],
+        "attack_success_roll": {
+          "timestamp": "18:45",
+          "table_sum": 9,
+          "calculation": "Ressourcen(2) + Verteidigung(3) + Komplexität(3) + Reaktionszeit(1) = 9",
+          "threshold": 9,
+          "dice_results": [
+            4,
+            3,
+            5
+          ],
+          "dice_total": 12,
+          "success": true,
+          "margin": 3,
+          "result_type": "Voller Erfolg",
+          "what_happened": "Rot übertrifft die Schwelle deutlich, Malware wird erfolgreich platziert",
+          "transcript_quote": "12 Punkte! Das reicht locker über die 9."
+        }
+      }
+    }
+  ]
+}

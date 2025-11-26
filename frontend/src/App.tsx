@@ -1,11 +1,7 @@
 import AudioUpload from "./components/AudioUpload";
 
 function App() {
-  return (
-    <div>
-      <AudioUpload />
-    </div>
-  );
+  return <AudioUpload />;
 }
 
 export default App;

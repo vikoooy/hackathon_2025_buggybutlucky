@@ -3,13 +3,18 @@
 Matrix Wargame OnePager Generator
 
 Liest round1_report.json und round2_report.json ein und erstellt
-einen strukturierten OnePager mit den wichtigsten Spielinformationen.
+einen strukturierten OnePager mit den wichtigsten Spielinformationen als PDF.
 """
 
 import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+from reportlab.lib.enums import TA_LEFT, TA_CENTER
 
 
 class OnePagerGenerator:
@@ -194,11 +199,17 @@ class OnePagerGenerator:
         # Phase 2: Angriff
         phase_2 = round_data.get("phase_2_angriff", {})
         
-        # Dimensionen
+        # Dimensionen (unterstützt beide JSON-Strukturen)
         dim_resources = phase_2.get("dimension_1_resources", {})
-        dim_defense = phase_2.get("dimension_2_defense", {})
-        dim_complexity = phase_2.get("dimension_3_complexity", {})
-        dim_impact = phase_2.get("dimension_4_impact", {})
+        
+        # Komplexität kann an Position 2 oder 3 sein
+        dim_complexity = phase_2.get("dimension_2_complexity", phase_2.get("dimension_3_complexity", {}))
+        
+        # Verteidigung kann an Position 2 oder 3 sein  
+        dim_defense = phase_2.get("dimension_3_defense", phase_2.get("dimension_2_defense", {}))
+        
+        # Auswirkung ist immer dimension_4_attack
+        dim_impact = phase_2.get("dimension_4_attack", {})
         
         resources_rating = dim_resources.get("game_master_rating", "?")
         resources_points = dim_resources.get("points_for_red", 0)
@@ -285,14 +296,14 @@ class OnePagerGenerator:
         print(f"\nFinale JSON erstellt: {output_file}")
         print(f"   Enthält {len(all_rounds)} Runden")
     
-    def generate_onepager(self, output_path: str):
+    def generate_onepager_pdf(self, output_path: str):
         """
-        Generiert den OnePager als Text-Datei.
+        Generiert den OnePager als PDF-Datei.
         
         Args:
             output_path: Pfad zur Output-Datei
         """
-        print("Generiere OnePager...\n")
+        print("Generiere OnePager PDF...\n")
         
         # Extrahiere Daten
         red_name, blue_name = self.extract_participants()
@@ -301,151 +312,245 @@ class OnePagerGenerator:
         progression = self.extract_attack_progression()
         vulnerabilities = self.extract_vulnerabilities()
         
-        # Erstelle OnePager-Text
-        lines = []
-        lines.append("=" * 80)
-        lines.append("MATRIX WARGAME - ONE PAGER")
-        lines.append("=" * 80)
-        lines.append(f"Generiert am: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        lines.append("")
+        # PDF Setup
+        output_file = Path(output_path)
+        doc = SimpleDocTemplate(
+            str(output_file),
+            pagesize=A4,
+            rightMargin=2*cm,
+            leftMargin=2*cm,
+            topMargin=2*cm,
+            bottomMargin=2*cm
+        )
+        
+        # Styles
+        styles = getSampleStyleSheet()
+        
+        # Custom Styles
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=18,
+            textColor='black',
+            spaceAfter=12,
+            alignment=TA_CENTER,
+            fontName='Helvetica-Bold'
+        )
+        
+        heading_style = ParagraphStyle(
+            'CustomHeading',
+            parent=styles['Heading2'],
+            fontSize=14,
+            textColor='black',
+            spaceAfter=10,
+            spaceBefore=10,
+            fontName='Helvetica-Bold'
+        )
+        
+        subheading_style = ParagraphStyle(
+            'CustomSubHeading',
+            parent=styles['Heading3'],
+            fontSize=12,
+            textColor='black',
+            spaceAfter=8,
+            spaceBefore=8,
+            fontName='Helvetica-Bold'
+        )
+        
+        normal_style = ParagraphStyle(
+            'CustomNormal',
+            parent=styles['Normal'],
+            fontSize=10,
+            textColor='black',
+            spaceAfter=6,
+            fontName='Helvetica'
+        )
+        
+        bullet_style = ParagraphStyle(
+            'CustomBullet',
+            parent=styles['Normal'],
+            fontSize=10,
+            textColor='black',
+            leftIndent=20,
+            spaceAfter=4,
+            fontName='Helvetica'
+        )
+        
+        # Story (Content)
+        story = []
+        
+        # Titel
+        story.append(Paragraph("MATRIX WARGAME - ONE PAGER", title_style))
+        story.append(Paragraph(
+            f"Generiert am: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            normal_style
+        ))
+        story.append(Spacer(1, 0.5*cm))
         
         # Teilnehmer
-        lines.append("TEILNEHMER")
-        lines.append("-" * 80)
-        lines.append(f"• {red_name} = Rot (Angreifer)")
-        lines.append(f"• {blue_name} = Blau (Verteidiger)")
-        lines.append("")
+        story.append(Paragraph("TEILNEHMER", heading_style))
+        story.append(Paragraph(f"• {red_name} = Rot (Angreifer)", bullet_style))
+        story.append(Paragraph(f"• {blue_name} = Blau (Verteidiger)", bullet_style))
+        story.append(Spacer(1, 0.3*cm))
         
         # Angriffsergebnisse
-        lines.append("ANGRIFFSERGEBNISSE")
-        lines.append("-" * 80)
+        story.append(Paragraph("ANGRIFFSERGEBNISSE", heading_style))
         for result in attack_results:
             status = "Erfolgreich" if result["success"] else "Fehlgeschlagen"
-            lines.append(f"• Runde {result['round']}: {result['category']}-Angriff auf {result['target']}")
-            lines.append(f"  Status: {status} ({result['result_type']})")
-        lines.append("")
+            story.append(Paragraph(
+                f"• Runde {result['round']}: {result['category']}-Angriff auf {result['target']}",
+                bullet_style
+            ))
+            story.append(Paragraph(
+                f"  Status: {status} ({result['result_type']})",
+                bullet_style
+            ))
+        story.append(Spacer(1, 0.3*cm))
         
         # Verteidigungsmaßnahmen
-        lines.append("VERTEIDIGUNGSMASSNAHMEN DER BWI")
-        lines.append("-" * 80)
-        lines.append("Stärken:")
-        for strength in defense["strengths"]:
-            lines.append(f"  • {strength}")
-        if not defense["strengths"]:
-            lines.append("  • Keine dokumentiert")
-        lines.append("")
-        lines.append("Schwächen:")
-        for weakness in defense["weaknesses"]:
-            lines.append(f"  • {weakness}")
-        if not defense["weaknesses"]:
-            lines.append("  • Keine dokumentiert")
-        lines.append("")
-        lines.append(f"Effektivste Verteidigung: {defense['most_effective']}")
-        lines.append("")
+        story.append(Paragraph("VERTEIDIGUNGSMASSNAHMEN DER BWI", heading_style))
+        story.append(Paragraph("Stärken:", subheading_style))
+        if defense["strengths"]:
+            for strength in defense["strengths"]:
+                story.append(Paragraph(f"• {strength}", bullet_style))
+        else:
+            story.append(Paragraph("• Keine dokumentiert", bullet_style))
+        
+        story.append(Paragraph("Schwächen:", subheading_style))
+        if defense["weaknesses"]:
+            for weakness in defense["weaknesses"]:
+                story.append(Paragraph(f"• {weakness}", bullet_style))
+        else:
+            story.append(Paragraph("• Keine dokumentiert", bullet_style))
+        
+        story.append(Paragraph(
+            f"Effektivste Verteidigung: {defense['most_effective']}",
+            normal_style
+        ))
+        story.append(Spacer(1, 0.3*cm))
         
         # Angriffsverläufe
-        lines.append("ANGRIFFSVERLÄUFE")
-        lines.append("-" * 80)
-        lines.append(f"Strategieentwicklung: {progression['evolution']}")
-        lines.append(f"Effektivster Angriff: {progression['most_effective']}")
+        story.append(Paragraph("ANGRIFFSVERLÄUFE", heading_style))
+        story.append(Paragraph(f"Strategieentwicklung: {progression['evolution']}", normal_style))
+        story.append(Paragraph(f"Effektivster Angriff: {progression['most_effective']}", normal_style))
         if progression["weaknesses"]:
-            lines.append("Aufgedeckte Schwächen von Rot:")
+            story.append(Paragraph("Aufgedeckte Schwächen von Rot:", subheading_style))
             for weakness in progression["weaknesses"]:
-                lines.append(f"  • {weakness}")
-        lines.append("")
+                story.append(Paragraph(f"• {weakness}", bullet_style))
+        story.append(Spacer(1, 0.3*cm))
         
         # Schwachstellen
-        lines.append("SCHWACHSTELLEN DIE DEN ANGRIFF ERMÖGLICHT HABEN")
-        lines.append("-" * 80)
+        story.append(Paragraph("SCHWACHSTELLEN DIE DEN ANGRIFF ERMÖGLICHT HABEN", heading_style))
         if vulnerabilities:
             for vuln in vulnerabilities:
                 vuln_text = vuln.get("vulnerability", "Unbekannt")
                 round_num = vuln.get("exploited_in_round", "?")
                 effectiveness = vuln.get("effectiveness", "unbekannt")
-                lines.append(f"• {vuln_text}")
-                lines.append(f"  Ausgenutzt in Runde {round_num} (Effektivität: {effectiveness})")
+                story.append(Paragraph(f"• {vuln_text}", bullet_style))
+                story.append(Paragraph(
+                    f"  Ausgenutzt in Runde {round_num} (Effektivität: {effectiveness})",
+                    bullet_style
+                ))
         else:
-            lines.append("• Keine spezifischen Schwachstellen dokumentiert")
-        lines.append("")
+            story.append(Paragraph("• Keine spezifischen Schwachstellen dokumentiert", bullet_style))
+        
+        # Neue Seite für detaillierte Runden
+        story.append(PageBreak())
         
         # Detaillierte Runden-Informationen
-        lines.append("=" * 80)
-        lines.append("DETAILLIERTE RUNDENÜBERSICHT")
-        lines.append("=" * 80)
-        lines.append("")
+        story.append(Paragraph("DETAILLIERTE RUNDENÜBERSICHT", title_style))
+        story.append(Spacer(1, 0.5*cm))
         
         for round_num in range(1, len(self.reports) + 1):
             details = self.extract_round_details(round_num)
             if not details:
                 continue
             
-            lines.append(f"RUNDE {round_num}")
-            lines.append("-" * 80)
+            story.append(Paragraph(f"RUNDE {round_num}", heading_style))
             
             # Phase 1
-            lines.append("Phase 1: Aufklärung")
+            story.append(Paragraph("Phase 1: Aufklärung", subheading_style))
             p1 = details["phase_1"]
             
             if p1["blue_success"]:
-                lines.append(f"  • Blau hat die 12 erreicht (Summe: {p1['blue_total']})")
-                lines.append(f"    → Intelvorteil von Rot ist OFFENGELEGT")
+                story.append(Paragraph(
+                    f"• Blau hat die 12 erreicht (Summe: {p1['blue_total']})",
+                    bullet_style
+                ))
+                story.append(Paragraph(
+                    "  → Intelvorteil von Rot ist OFFENGELEGT",
+                    bullet_style
+                ))
             else:
-                lines.append(f"  • Blau hat die 12 nicht erreicht (Summe: {p1['blue_total']})")
-                lines.append(f"    → Intelvorteil von Rot ist GEHEIM")
+                story.append(Paragraph(
+                    f"• Blau hat die 12 nicht erreicht (Summe: {p1['blue_total']})",
+                    bullet_style
+                ))
+                story.append(Paragraph(
+                    "  → Intelvorteil von Rot ist GEHEIM",
+                    bullet_style
+                ))
             
-            lines.append(f"  • Rot: {p1['intel_description']}")
-            lines.append("")
+            story.append(Paragraph(f"• Rot: {p1['intel_description']}", bullet_style))
+            story.append(Spacer(1, 0.2*cm))
             
             # Phase 2
-            lines.append("Phase 2: Angriff")
+            story.append(Paragraph("Phase 2: Angriff", subheading_style))
             p2 = details["phase_2"]
             
-            lines.append(f"  • Ressourcen: {p2['resources']['rating']} ({p2['resources']['points']})")
-            lines.append(f"  • Komplexität: {p2['complexity']['rating']} ({p2['complexity']['points']})")
-            lines.append(f"  • Verteidigung: {p2['defense']['rating']} ({p2['defense']['points']})")
-            lines.append(f"  • Auswirkung: {p2['impact']['rating']} ({p2['impact']['points']})")
-            lines.append(f"  • Tabellensumme: {p2['table_sum']}")
-            lines.append("")
+            story.append(Paragraph(
+                f"• Ressourcen: {p2['resources']['rating']} ({p2['resources']['points']})",
+                bullet_style
+            ))
+            story.append(Paragraph(
+                f"• Komplexität: {p2['complexity']['rating']} ({p2['complexity']['points']})",
+                bullet_style
+            ))
+            story.append(Paragraph(
+                f"• Verteidigung: {p2['defense']['rating']} ({p2['defense']['points']})",
+                bullet_style
+            ))
+            story.append(Paragraph(
+                f"• Auswirkung: {p2['impact']['rating']} ({p2['impact']['points']})",
+                bullet_style
+            ))
+            story.append(Paragraph(f"• Tabellensumme: {p2['table_sum']}", bullet_style))
+            story.append(Spacer(1, 0.2*cm))
             
             # Erfolgswurf
             success_text = "erfolgreich" if p2["success"] else "nicht ausreichend"
-            lines.append(f"  • Erfolgswurf von Rot: {success_text}")
-            lines.append(f"    Würfelergebnisse: {p2['dice_results']} (Summe: {p2['dice_total']})")
-            lines.append(f"  • Ergebnis: {p2['result_type']}")
-            lines.append("")
-            lines.append(f"  • Auswirkungen:")
-            # Formatiere Beschreibung (max 70 Zeichen pro Zeile)
-            description = p2["what_happened"]
-            import textwrap
-            wrapped_lines = textwrap.wrap(description, width=70)
-            for wrapped_line in wrapped_lines:
-                lines.append(f"    {wrapped_line}")
-            lines.append("")
+            story.append(Paragraph(f"• Erfolgswurf von Rot: {success_text}", bullet_style))
+            story.append(Paragraph(
+                f"  Würfelergebnisse: {p2['dice_results']} (Summe: {p2['dice_total']})",
+                bullet_style
+            ))
+            story.append(Paragraph(f"• Ergebnis: {p2['result_type']}", bullet_style))
+            story.append(Spacer(1, 0.2*cm))
+            
+            story.append(Paragraph("• Auswirkungen:", bullet_style))
+            story.append(Paragraph(f"  {p2['what_happened']}", bullet_style))
+            
+            # Spacer zwischen Runden
+            if round_num < len(self.reports):
+                story.append(Spacer(1, 0.5*cm))
         
-        lines.append("=" * 80)
-        lines.append("ENDE DES REPORTS")
-        lines.append("=" * 80)
+        # Build PDF
+        doc.build(story)
         
-        # Schreibe in Datei
-        output_file = Path(output_path)
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write("\n".join(lines))
-        
-        print(f"✅ OnePager erstellt: {output_file}")
-        print(f"   Anzahl Zeilen: {len(lines)}")
+        print(f"✅ OnePager PDF erstellt: {output_file}")
 
 
 def main():
     """Hauptfunktion."""
     
     print("=" * 80)
-    print("MATRIX WARGAME - ONEPAGER GENERATOR")
+    print("MATRIX WARGAME - ONEPAGER GENERATOR (PDF)")
     print("=" * 80)
     print()
     
     # Konfiguration
     REPORT_DIR = "data/reports"
-    OUTPUT_FILE = "data/reports/game_onepager.txt"
+    OUTPUT_FILE = "data/reports/game_onepager.pdf"
     
     # Bei Bedarf Pfade aus Kommandozeile übernehmen
     if len(sys.argv) >= 2:
@@ -467,15 +572,15 @@ def main():
     
     print()
     
-    # Erstelle OnePager
-    generator.generate_onepager(OUTPUT_FILE)
+    # Erstelle OnePager PDF
+    generator.generate_onepager_pdf(OUTPUT_FILE)
     
     print()
     print("=" * 80)
-    print("✅ ONEPAGER ERFOLGREICH GENERIERT!")
+    print("✅ ONEPAGER PDF ERFOLGREICH GENERIERT!")
     print("=" * 80)
     print(f"\nGenerierte Dateien:")
-    print(f"  • OnePager: {OUTPUT_FILE}")
+    print(f"  • OnePager PDF: {OUTPUT_FILE}")
     print(f"  • Kombinierte JSON: {REPORT_DIR}/game_report_combined.json")
 
 

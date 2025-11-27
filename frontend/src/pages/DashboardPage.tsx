@@ -136,11 +136,6 @@ export function DashboardPage() {
   };
 
   const colors = ["#4F46E5", "#EC4899", "#10B981", "#F59E0B", "#8B5CF6", "#EF4444", "#06B6D4", "#F97316"];
-  const qualityColors: { [key: string]: string } = {
-    stark: "#10B981",
-    mittel: "#F59E0B",
-    schwach: "#EF4444"
-  };
   const speakerColors = ["#8B5CF6", "#EC4899", "#06B6D4"];
 
   return (
@@ -261,14 +256,9 @@ export function DashboardPage() {
                     formatter={(v: number) => `${v.toFixed(1)}%`}
                     contentStyle={{ backgroundColor: "#1f2937", color: "white", borderRadius: "4px" }}
                   />
-                  <Legend 
-                    verticalAlign="top" 
+                  <Legend
+                    verticalAlign="top"
                     wrapperStyle={{ color: "white", paddingBottom: "20px" }}
-                    payload={[
-                      { value: "Stark", type: "rect", color: "#10B981" },
-                      { value: "Mittel", type: "rect", color: "#F59E0B" },
-                      { value: "Schwach", type: "rect", color: "#EF4444" }
-                    ]}
                   />
                   <Bar dataKey="stark" stackId="a" fill="#10B981" name="Stark" />
                   <Bar dataKey="mittel" stackId="a" fill="#F59E0B" name="Mittel" />

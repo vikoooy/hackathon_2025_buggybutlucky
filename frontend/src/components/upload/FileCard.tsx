@@ -1,29 +1,60 @@
-import { Music, X } from "lucide-react";
+import { X } from "lucide-react";
 
-interface Props {
+interface FileCardProps {
   file: File;
   onRemove: () => void;
 }
 
-export function FileCard({ file, onRemove }: Props) {
+export function FileCard({ file, onRemove }: FileCardProps) {
   return (
-    <div className="bg-gray-800 p-4 rounded-lg text-white flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <Music className="w-6 h-6 text-red-500" />
-        <div>
-          <p className="font-semibold">{file.name}</p>
-          <p className="text-gray-400 text-sm">
-            {(file.size / 1024 / 1024).toFixed(2)} MB
-          </p>
-        </div>
-      </div>
-
+    <div
+      className="
+        relative
+        bg-white/10 
+        backdrop-blur-xl 
+        border border-white/20 
+        rounded-2xl 
+        shadow-lg 
+        p-5
+        flex
+        flex-col
+        gap-2
+        overflow-hidden   /* wichtig! */
+      "
+    >
+      {/* X Button */}
       <button
         onClick={onRemove}
-        className="p-2 rounded-md bg-red-600 hover:bg-red-700 text-white"
+        className="
+          absolute 
+          top-3 
+          right-3
+          bg-red-600 
+          hover:bg-red-700 
+          text-white 
+          p-2 
+          rounded-xl 
+          transition 
+          shadow-md
+          z-20
+        "
       >
-        <X className="w-4 h-4" />
+        <X size={18} />
       </button>
+
+      {/* File Info Row */}
+      <div className="flex items-center gap-3 pr-12">
+        <span className="text-red-400 text-2xl">🎵</span>
+
+        <div className="flex flex-col">
+          <span className="font-semibold text-white truncate max-w-[240px]">
+            {file.name}
+          </span>
+          <span className="text-gray-300 text-sm">
+            {(file.size / (1024 * 1024)).toFixed(2)} MB
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

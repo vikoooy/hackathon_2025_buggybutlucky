@@ -11,71 +11,126 @@ export function AudioUploadPage() {
   const [isDragging, setIsDragging] = useState(false);
   const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen bg-[#949494] p-12 text-white">
-      {/* Header */}
-      <div className="w-full text-center mb-12">
-        <h1 className="text-4xl font-bold text-white drop-shadow-lg">
+return (
+  <div
+    className="
+      min-h-screen 
+      text-white 
+      bg-gradient-to-br 
+      from-[#2A2F3A] 
+      via-[#1A1D23] 
+      to-[#0F1115] 
+      flex 
+      flex-col 
+      items-center 
+      justify-center
+      px-12
+    "
+  >
+
+    {/* Header */}
+    <div className="mb-20 flex justify-center">
+      <div
+        className="
+          backdrop-blur-2xl
+          bg-white/10
+          border border-white/20
+          px-16 py-6
+          rounded-3xl
+          shadow-[0_8px_32px_rgba(0,0,0,0.4)]
+        "
+      >
+        <h1 className="text-4xl font-bold tracking-wide text-white">
           Wargaming Report Portal
         </h1>
       </div>
+    </div>
 
-      <div className="grid grid-cols-3 gap-16 max-w-6xl mx-auto min-h-[80vh]">
-        {/* Upload-Bereich */}
-        <div className="col-span-1 flex items-center justify-center">
-          <div className="w-full max-w-sm">
-            {!file ? (
-              <UploadZone
-                onFileSelect={setFile}
-                isDragging={isDragging}
-                setIsDragging={setIsDragging}
-                // optional: passe UploadZone-Farben an
-              />
-            ) : (
-              <>
-                <FileCard file={file} onRemove={removeFile} />
-                <button
-                  className="mt-4 w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition"
-                  onClick={handleUpload}
-                  disabled={status === "uploading" || status === "processing"}
-                >
-                  {status === "uploading"
-                    ? "Hochladen…"
-                    : status === "processing"
-                    ? "Verarbeitung…"
-                    : "Upload starten"}
-                </button>
+    {/* Grid Container */}
+    <div className="grid grid-cols-3 gap-16 max-w-6xl w-full">
 
-                <UploadStatus status={status} progress={progress} />
-              </>
-            )}
-          </div>
-        </div>
+      {/* Upload Box */}
+      <div className="col-span-1 flex items-center justify-center">
+        <div
+          className="
+            w-full max-w-sm
+            backdrop-blur-2xl
+            bg-white/10
+            border border-white/20
+            rounded-3xl
+            shadow-[0_8px_32px_rgba(0,0,0,0.4)]
+            hover:bg-white/15
+            transition
+            p-8
+          "
+        >
+          {!file ? (
+            <UploadZone
+              onFileSelect={setFile}
+              isDragging={isDragging}
+              setIsDragging={setIsDragging}
+            />
+          ) : (
+            <>
+              <FileCard file={file} onRemove={removeFile} />
 
-        {/* Rechte Buttons */}
-        <div className="col-span-2 flex flex-col justify-center gap-4 pr-4">
-          <button
-            className="h-20 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
-            onClick={() => navigate("/dashboard")}
-          >
-            View Dashboard
-          </button>
+              <button
+                className="
+                  mt-4 w-full py-3
+                  bg-[#D64545]
+                  hover:bg-[#B73737]
+                  rounded-xl
+                  text-white font-semibold
+                  shadow-lg shadow-[rgba(214,69,69,0.35)]
+                  transition
+                "
+                onClick={handleUpload}
+                disabled={status === 'uploading' || status === 'processing'}
+              >
+                {status === 'uploading'
+                  ? 'Hochladen…'
+                  : status === 'processing'
+                  ? 'Verarbeitung…'
+                  : 'Upload starten'}
+              </button>
 
-          <button
-            className="h-20 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
-            onClick={generatePdfReport}
-          >
-            Report
-          </button>
-
-          <button
-            className="h-20 bg-transparent border-2 border-white text-white text-lg font-semibold rounded-lg hover:bg-white/10 transition"
-            onClick={() => navigate("/view-x")}
-          >
-            View X
-          </button>
+              <UploadStatus status={status} progress={progress} />
+            </>
+          )}
         </div>
       </div>
+
+      {/* Right Side Buttons */}
+      <div className="col-span-2 flex flex-col justify-center gap-8 pr-4">
+        {[
+          { label: 'View Dashboard', action: () => navigate('/dashboard') },
+          { label: 'Report', action: generatePdfReport },
+          { label: 'View X', action: () => navigate('/view-x') },
+        ].map((btn, i) => (
+          <button
+            key={i}
+            className="
+              h-24
+              backdrop-blur-2xl
+              bg-white/10
+              border border-white/20
+              rounded-3xl
+              shadow-[0_8px_32px_rgba(0,0,0,0.35)]
+              hover:bg-white/15
+              text-white
+              text-xl
+              font-semibold
+              transition
+            "
+            onClick={btn.action}
+          >
+            {btn.label}
+          </button>
+        ))}
+      </div>
+
     </div>
-  );
+  </div>
+);
+
 }

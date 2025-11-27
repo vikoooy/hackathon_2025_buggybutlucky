@@ -15,6 +15,10 @@ interface ProgressResponse {
   error?: string;
 }
 
+// Falls du später eine .env verwendest, kannst du das hier variabler machen.
+const API_BASE =
+  import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 export function useAudioUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<JobStatus>("idle");
@@ -31,23 +35,28 @@ export function useAudioUpload() {
       if (!file) return;
 
       setStatus("uploading");
+      setProgress(0);
 
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("/audio/upload", {
+      const res = await fetch(`${API_BASE}/audio/upload`, {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) {
+        console.error("Upload failed:", await res.text());
+        throw new Error("Upload failed");
+      }
 
       const data: UploadResponse = await res.json();
 
       setStatus("processing");
       await pollProgress(data.job_id);
+
     } catch (err) {
-      console.error(err);
+      console.error("Upload error:", err);
       setStatus("error");
     }
   }
@@ -56,24 +65,31 @@ export function useAudioUpload() {
     let done = false;
 
     while (!done) {
-      const res = await fetch(`/audio/progress/${jobId}`);
+      try {
+        const res = await fetch(`${API_BASE}/audio/progress/${jobId}`);
 
-      if (!res.ok) {
+        if (!res.ok) {
+          console.error("Progress failed:", await res.text());
+          setStatus("error");
+          return;
+        }
+
+        const data: ProgressResponse = await res.json();
+        setProgress(data.progress ?? 0);
+
+        if (data.status === "completed") {
+          setStatus("done");
+          done = true;
+        } else if (data.status === "failed") {
+          setStatus("error");
+          done = true;
+        } else {
+          await new Promise((r) => setTimeout(r, 1000));
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
         setStatus("error");
         return;
-      }
-
-      const data: ProgressResponse = await res.json();
-      setProgress(data.progress);
-
-      if (data.status === "completed") {
-        setStatus("done");
-        done = true;
-      } else if (data.status === "failed") {
-        setStatus("error");
-        done = true;
-      } else {
-        await new Promise((r) => setTimeout(r, 1000));
       }
     }
   }

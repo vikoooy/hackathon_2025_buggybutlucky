@@ -1,0 +1,92 @@
+================================================================================
+MATRIX WARGAME - ONE PAGER
+================================================================================
+Generiert am: 2025-11-27 10:04:11
+
+TEILNEHMER
+--------------------------------------------------------------------------------
+• Clara = Rot (Angreifer)
+• Antonio = Blau (Verteidiger)
+
+ANGRIFFSERGEBNISSE
+--------------------------------------------------------------------------------
+• Runde 1: Cyber-Angriff auf Hackathon-Kommunikation
+  Status: Erfolgreich (Knapper Erfolg (Margin 0-2))
+• Runde 2: Klassisch-Angriff auf Hauptwasserleitung des Veranstaltungsgebäudes
+  Status: Fehlgeschlagen (Knapper Fehlschlag)
+
+VERTEIDIGUNGSMASSNAHMEN DER BWI
+--------------------------------------------------------------------------------
+Stärken:
+  • Etablierte Sicherheitskultur
+  • Mehrheit der Mitarbeiter nutzt PKI-Karten
+
+Schwächen:
+  • Einzelne nachlässige Mitarbeiter
+  • Keine technische Absicherung gegen Innentäter
+
+Effektivste Verteidigung: Allgemeine Sicherheitspraktiken wie Laptop-Sperrung
+
+ANGRIFFSVERLÄUFE
+--------------------------------------------------------------------------------
+Strategieentwicklung: Gezielte Ausnutzung menschlicher Schwächen statt technischer Angriffe
+Effektivster Angriff: Social Engineering durch Innentäter
+Aufgedeckte Schwächen von Rot:
+  • Abhängigkeit von spezifischem Timing
+  • Begrenzte Wirkung durch Zeitverzögerung
+
+SCHWACHSTELLEN DIE DEN ANGRIFF ERMÖGLICHT HABEN
+--------------------------------------------------------------------------------
+• Nachlässiger Umgang mit Laptop-Sicherheit
+  Ausgenutzt in Runde 1 (Effektivität: hoch)
+
+================================================================================
+DETAILLIERTE RUNDENÜBERSICHT
+================================================================================
+
+RUNDE 1
+--------------------------------------------------------------------------------
+Phase 1: Aufklärung
+  • Blau hat die 12 nicht erreicht (Summe: 10)
+    → Intelvorteil von Rot ist GEHEIM
+  • Rot: Kein Intelvorteil (da 1 gewürfelt)
+
+Phase 2: Angriff
+  • Ressourcen: S (1)
+  • Komplexität: ? (0)
+  • Verteidigung: ? (0)
+  • Auswirkung: ? (0)
+  • Tabellensumme: 1
+
+  • Erfolgswurf von Rot: erfolgreich
+    Würfelergebnisse: [3, 4, 3] (Summe: 10)
+  • Ergebnis: Knapper Erfolg (Margin 0-2)
+
+  • Auswirkungen:
+    Angreifer konnte erfolgreich falsche Standortinformationen versenden
+
+RUNDE 2
+--------------------------------------------------------------------------------
+Phase 1: Aufklärung
+  • Blau hat die 12 nicht erreicht (Summe: 5)
+    → Intelvorteil von Rot ist GEHEIM
+  • Rot: Intelvorteil von +2 auf Angriffe gegen unbekannt (da 5 gewürfelt)
+
+Phase 2: Angriff
+  • Ressourcen: M (2)
+  • Komplexität: L (3)
+  • Verteidigung: M (2)
+  • Auswirkung: ? (0)
+  • Tabellensumme: 7
+
+  • Erfolgswurf von Rot: nicht ausreichend
+    Würfelergebnisse: [6] (Summe: 6)
+  • Ergebnis: Knapper Fehlschlag
+
+  • Auswirkungen:
+    Teilweiser Wasserausbruch, aber schnelle Entdeckung durch
+    Rezeptionsmitarbeiter
+
+================================================================================
+ENDE DES REPORTS
+================================================================================

@@ -1,0 +1,5 @@
+{
+  "runde_1": "00:00–00:16 Speaker 0 (Moderator): \"Schönen guten Morgen, Antonio, Clara. Heute ist Op4C geplant. Hier führen wir einen Angriff gegen das Hackathon durch.\"[...]04:30–04:35 Speaker 0 (Moderator): \"Okay, dann können wir jetzt in die zweite Runde gehen, in die zweite Phase gehen.\"[...bis...]19:00–19:03 Speaker 0 (Moderator): \"Jetzt wiederholen wir quasi gleiche Runde.\"",
+  "runde_2": "19:03–19:05 Speaker 0 (Moderator): \"Wir gehen zurück in die Phase 1\"[...]32:46–32:50 Speaker 0 (Moderator): \"Dankeschön.\"",
+  "cut_reasoning": "Der Schnitt wurde bei 19:03 gesetzt, wo der Moderator explizit den Beginn der zweiten Runde ankündigt mit \"Wir gehen zurück in die Phase 1\". Dies markiert einen klaren Übergang zwischen den beiden Angriffsszenarien - vom ersten Angriff (Fake-Emails bezüglich des Veranstaltungsorts) zum zweiten Angriff (Sabotage der Wasserleitung)."
+}

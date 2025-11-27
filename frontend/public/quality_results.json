@@ -1,0 +1,32 @@
+{
+  "red_arguments": {
+    "total": 8,
+    "quality": {
+      "stark": {
+        "count": 5,
+        "percentage": 62.5
+      },
+      "mittel": {
+        "count": 3,
+        "percentage": 37.5
+      }
+    }
+  },
+  "blue_arguments": {
+    "total": 8,
+    "quality": {
+      "mittel": {
+        "count": 4,
+        "percentage": 50.0
+      },
+      "stark": {
+        "count": 3,
+        "percentage": 37.5
+      },
+      "schwach": {
+        "count": 1,
+        "percentage": 12.5
+      }
+    }
+  }
+}

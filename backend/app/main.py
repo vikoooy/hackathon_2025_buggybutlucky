@@ -9,3 +9,8 @@ from .routers import audio
 app = FastAPI()
 
 app.include_router(audio.router)
+
+from .routers import audio, report
+app.include_router(audio.router)
+app.include_router(report.router)
+

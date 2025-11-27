@@ -223,6 +223,23 @@ class OnePagerGenerator:
         impact_rating = dim_impact.get("game_master_rating", "?")
         impact_points = dim_impact.get("points_for_red", 0)
         
+        # Extrahiere Timestamps für Verlinkung (letztes timestamp aus arguments)
+        def get_last_timestamp(dimension_dict):
+            """Extrahiert das letzte timestamp aus red_arguments und blue_arguments"""
+            timestamps = []
+            for arg in dimension_dict.get("red_arguments", []):
+                if "timestamp" in arg:
+                    timestamps.append(arg["timestamp"])
+            for arg in dimension_dict.get("blue_arguments", []):
+                if "timestamp" in arg:
+                    timestamps.append(arg["timestamp"])
+            return timestamps[-1] if timestamps else None
+        
+        resources_timestamp = get_last_timestamp(dim_resources)
+        complexity_timestamp = get_last_timestamp(dim_complexity)
+        defense_timestamp = get_last_timestamp(dim_defense)
+        impact_timestamp = get_last_timestamp(dim_impact)
+        
         table_sum = resources_points + defense_points + complexity_points + impact_points
         
         # Erfolgswurf
@@ -240,10 +257,10 @@ class OnePagerGenerator:
                 "intel_description": intel_description
             },
             "phase_2": {
-                "resources": {"rating": resources_rating, "points": resources_points},
-                "defense": {"rating": defense_rating, "points": defense_points},
-                "complexity": {"rating": complexity_rating, "points": complexity_points},
-                "impact": {"rating": impact_rating, "points": impact_points},
+                "resources": {"rating": resources_rating, "points": resources_points, "timestamp": resources_timestamp},
+                "defense": {"rating": defense_rating, "points": defense_points, "timestamp": defense_timestamp},
+                "complexity": {"rating": complexity_rating, "points": complexity_points, "timestamp": complexity_timestamp},
+                "impact": {"rating": impact_rating, "points": impact_points, "timestamp": impact_timestamp},
                 "table_sum": table_sum,
                 "dice_results": dice_results,
                 "dice_total": dice_total,
@@ -252,6 +269,34 @@ class OnePagerGenerator:
                 "what_happened": what_happened
             }
         }
+    
+    def load_transcript(self, transcript_path: str):
+        """
+        Lädt und verarbeitet das Transkript.
+        
+        Args:
+            transcript_path: Pfad zur Transkript-Datei
+            
+        Returns:
+            Verarbeiteter Transkript-Text mit umbenannten Speakern
+        """
+        transcript_file = Path(transcript_path)
+        if not transcript_file.exists():
+            print(f"Warnung: Transkript-Datei nicht gefunden: {transcript_path}")
+            return None
+        
+        with open(transcript_file, "r", encoding="utf-8") as f:
+            transcript_text = f.read()
+        
+        # Ersetze Speaker-Namen
+        transcript_text = transcript_text.replace("Speaker 1:", "Team Rot:")
+        transcript_text = transcript_text.replace("Speaker 1 ", "Team Rot ")
+        transcript_text = transcript_text.replace("Speaker 2:", "Team Blau:")
+        transcript_text = transcript_text.replace("Speaker 2 ", "Team Blau ")
+        transcript_text = transcript_text.replace("Speaker 0 (Moderator):", "Moderator:")
+        transcript_text = transcript_text.replace("Speaker 0:", "Moderator:")
+        
+        return transcript_text
     
     def generate_combined_json(self, output_path: str):
         """
@@ -296,14 +341,22 @@ class OnePagerGenerator:
         print(f"\nFinale JSON erstellt: {output_file}")
         print(f"   Enthält {len(all_rounds)} Runden")
     
-    def generate_onepager_pdf(self, output_path: str):
+    def generate_onepager_pdf(self, output_path: str, transcript_path: str = None):
         """
         Generiert den OnePager als PDF-Datei.
         
         Args:
             output_path: Pfad zur Output-Datei
+            transcript_path: Pfad zur Transkript-Datei (optional)
         """
         print("Generiere OnePager PDF...\n")
+        
+        # Lade Transkript falls vorhanden
+        transcript_text = None
+        if transcript_path:
+            transcript_text = self.load_transcript(transcript_path)
+            if transcript_text:
+                print(f"  ✓ Transkript geladen: {transcript_path}\n")
         
         # Extrahiere Daten
         red_name, blue_name = self.extract_participants()
@@ -498,20 +551,33 @@ class OnePagerGenerator:
             story.append(Paragraph("Phase 2: Angriff", subheading_style))
             p2 = details["phase_2"]
             
+            # Funktion zum Erstellen verlinkter Dimension-Texte
+            def create_dimension_text(label, rating, points, timestamp):
+                if timestamp and transcript_text:
+                    # Erstelle Anker-Name aus Timestamp
+                    anchor = f"ts_{timestamp.replace(':', '_')}"
+                    return f'• {label}: <link href="#{anchor}" color="blue">{rating} ({points})</link>'
+                else:
+                    return f'• {label}: {rating} ({points})'
+            
             story.append(Paragraph(
-                f"• Ressourcen: {p2['resources']['rating']} ({p2['resources']['points']})",
+                create_dimension_text("Ressourcen", p2['resources']['rating'], 
+                                    p2['resources']['points'], p2['resources'].get('timestamp')),
                 bullet_style
             ))
             story.append(Paragraph(
-                f"• Komplexität: {p2['complexity']['rating']} ({p2['complexity']['points']})",
+                create_dimension_text("Komplexität", p2['complexity']['rating'], 
+                                    p2['complexity']['points'], p2['complexity'].get('timestamp')),
                 bullet_style
             ))
             story.append(Paragraph(
-                f"• Verteidigung: {p2['defense']['rating']} ({p2['defense']['points']})",
+                create_dimension_text("Verteidigung", p2['defense']['rating'], 
+                                    p2['defense']['points'], p2['defense'].get('timestamp')),
                 bullet_style
             ))
             story.append(Paragraph(
-                f"• Auswirkung: {p2['impact']['rating']} ({p2['impact']['points']})",
+                create_dimension_text("Auswirkung", p2['impact']['rating'], 
+                                    p2['impact']['points'], p2['impact'].get('timestamp')),
                 bullet_style
             ))
             story.append(Paragraph(f"• Tabellensumme: {p2['table_sum']}", bullet_style))
@@ -533,6 +599,42 @@ class OnePagerGenerator:
             # Spacer zwischen Runden
             if round_num < len(self.reports):
                 story.append(Spacer(1, 0.5*cm))
+        
+        # Transkript-Sektion hinzufügen
+        if transcript_text:
+            story.append(PageBreak())
+            story.append(Paragraph("VOLLSTÄNDIGES TRANSKRIPT", title_style))
+            story.append(Spacer(1, 0.5*cm))
+            
+            # Style für Transkript
+            transcript_style = ParagraphStyle(
+                'TranscriptStyle',
+                parent=styles['Normal'],
+                fontSize=9,
+                textColor='black',
+                spaceAfter=4,
+                fontName='Helvetica',
+                leading=12
+            )
+            
+            # Verarbeite Transkript Zeile für Zeile und füge Anker hinzu
+            lines = transcript_text.split('\n')
+            for line in lines:
+                if line.strip():
+                    # Prüfe ob Zeile mit Timestamp beginnt (Format: HH:MM–HH:MM)
+                    if '–' in line[:10]:
+                        # Extrahiere ersten Timestamp
+                        try:
+                            timestamp_part = line.split()[0]  # z.B. "00:00–00:16"
+                            start_time = timestamp_part.split('–')[0]  # z.B. "00:00"
+                            anchor = f"ts_{start_time.replace(':', '_')}"
+                            # Füge unsichtbaren Anker hinzu
+                            line_with_anchor = f'<a name="{anchor}"/>{line}'
+                            story.append(Paragraph(line_with_anchor, transcript_style))
+                        except:
+                            story.append(Paragraph(line, transcript_style))
+                    else:
+                        story.append(Paragraph(line, transcript_style))
         
         # Build PDF
         doc.build(story)
@@ -572,8 +674,9 @@ def main():
     
     print()
     
-    # Erstelle OnePager PDF
-    generator.generate_onepager_pdf(OUTPUT_FILE)
+    # Erstelle OnePager PDF mit Transkript
+    transcript_path = f"{REPORT_DIR}/../transcript.txt"  # data/transcript.txt
+    generator.generate_onepager_pdf(OUTPUT_FILE, transcript_path)
     
     print()
     print("=" * 80)

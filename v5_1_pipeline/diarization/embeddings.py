@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 import torch
-from speechbrain.pretrained import EncoderClassifier
+from speechbrain.inference.speaker import EncoderClassifier
 
 from ..utils import load_audio
 from ..asr.transcribe import Word

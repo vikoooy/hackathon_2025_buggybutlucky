@@ -36,7 +36,7 @@ def cluster_embeddings_ahc(
 
     model = AgglomerativeClustering(
         n_clusters=n_spk,
-        affinity="cosine",
+        metric="cosine",
         linkage="average",
     )
     labels = model.fit_predict(embs)

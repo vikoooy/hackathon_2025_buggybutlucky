@@ -20,10 +20,13 @@ def run_vad(audio_path: str, hf_token: Optional[str] = None) -> List[VadSegment]
     if token is None:
         token = None  # pyannote nutzt ggf. globales HF-Login
 
-    pipeline = Pipeline.from_pretrained("pyannote/vad", use_auth_token=token)
+    pipeline = Pipeline.from_pretrained("pyannote/voice-activity-detection")
 
     wav, sr = load_audio(audio_path)
+    print(wav)
+    print(sr)
     file_dict = {"waveform": wav, "sample_rate": sr}
+    print(file_dict)
 
     vad = pipeline(file_dict)
     segs: List[VadSegment] = []

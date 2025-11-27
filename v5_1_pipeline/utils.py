@@ -9,6 +9,14 @@ def fmt_time(t: float) -> str:
 
 def load_audio(path: str):
     wav, sr = torchaudio.load(path)
+
+    # Stereo → Mono
     if wav.size(0) > 1:
         wav = torch.mean(wav, dim=0, keepdim=True)
+
+    # Resample falls nötig
+    if sr != 16000:
+        wav = torchaudio.functional.resample(wav, sr, 16000)
+        sr = 16000
+
     return wav, sr

@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
   ResponsiveContainer,
   BarChart,
   Bar,
   XAxis,
   YAxis,
+  Tooltip,
   Legend
 } from "recharts";
 
@@ -84,29 +81,27 @@ export function DashboardPage() {
 
   useEffect(() => {
     fetch("/phases_results.json")
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => setPhaseData(data));
 
     fetch("/tone_results.json")
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => setToneData(data));
 
     fetch("/quality_results.json")
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => setQualityData(data));
 
     fetch("/speakers_results.json")
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => setSpeakerData(data));
   }, []);
 
   const getToneBarData = () => {
     if (!toneData) return [];
-
     const allTones = new Set<string>();
-    Object.keys(toneData.red_arguments.tone).forEach((tone) => allTones.add(tone));
-    Object.keys(toneData.blue_arguments.tone).forEach((tone) => allTones.add(tone));
-
+    Object.keys(toneData.red_arguments.tone).forEach((t) => allTones.add(t));
+    Object.keys(toneData.blue_arguments.tone).forEach((t) => allTones.add(t));
     return Array.from(allTones).map((tone) => ({
       tone,
       rot: toneData.red_arguments.tone[tone]?.percentage || 0,
@@ -116,21 +111,16 @@ export function DashboardPage() {
 
   const getQualityStackedData = () => {
     if (!qualityData) return [];
-
     const allQualities = new Set<string>();
-    Object.keys(qualityData.red_arguments.quality).forEach((quality) =>
-      allQualities.add(quality)
-    );
-    Object.keys(qualityData.blue_arguments.quality).forEach((quality) =>
-      allQualities.add(quality)
-    );
+    Object.keys(qualityData.red_arguments.quality).forEach((q) => allQualities.add(q));
+    Object.keys(qualityData.blue_arguments.quality).forEach((q) => allQualities.add(q));
 
     const redData: any = { player: "Spieler Rot" };
     const blueData: any = { player: "Spieler Blau" };
 
-    allQualities.forEach((quality) => {
-      redData[quality] = qualityData.red_arguments.quality[quality]?.percentage || 0;
-      blueData[quality] = qualityData.blue_arguments.quality[quality]?.percentage || 0;
+    allQualities.forEach((q) => {
+      redData[q] = qualityData.red_arguments.quality[q]?.percentage || 0;
+      blueData[q] = qualityData.blue_arguments.quality[q]?.percentage || 0;
     });
 
     return [redData, blueData];
@@ -138,13 +128,10 @@ export function DashboardPage() {
 
   const getSpeakerStackedData = () => {
     if (!speakerData) return [];
-
     const data: any = { label: "Redeanteile" };
-
     Object.entries(speakerData.speakers).forEach(([speaker, info]) => {
       data[speaker] = info.percentage;
     });
-
     return [data];
   };
 
@@ -154,32 +141,58 @@ export function DashboardPage() {
     mittel: "#F59E0B",
     schwach: "#EF4444"
   };
-
   const speakerColors = ["#8B5CF6", "#EC4899", "#06B6D4"];
 
   return (
-    <div className="min-h-screen bg-[#949494] p-12 text-black overflow-x-hidden">
-      <h1 className="text-4xl font-bold text-center mb-12">
-        Dashboard - Phasen Analyse
-      </h1>
+    <div className="min-h-screen bg-gray-800 p-12 text-white overflow-x-hidden">
+      <div className="max-w-7xl mx-auto mb-12 flex items-center justify-between">
+        <button
+          onClick={() => window.location.href = '/'}
+          className="px-4 py-2 border-2 border-white rounded-lg text-white hover:bg-white hover:text-gray-800 transition-colors"
+        >
+          ← Zurück
+        </button>
+        <h1 className="text-4xl font-bold flex-1 text-center">
+          Dashboard - Phasen Analyse
+        </h1>
+        <div className="w-[120px]"></div>
+      </div>
 
-      {/* 2x2 GRID (alle Boxen gleiche Höhe) */}
-      <div className="grid grid-cols-2 gap-12 max-w-7xl mx-auto auto-rows-fr">
-
-        {/* ──────────────────────────────── */}
-        {/* OBERES LINKES FELD: TONE CHART */}
-        {/* ──────────────────────────────── */}
-        <div className="bg-white rounded-xl p-6 shadow-md flex flex-col">
-          <h2 className="font-bold mb-4">Tone-Verteilung: Rot vs Blau</h2>
+      {/* ── Obere Reihe ── */}
+      <div className="grid grid-cols-[3fr_2fr] gap-12 max-w-7xl mx-auto mb-12">
+        {/* Oben links: Tone Chart */}
+        <div className="flex flex-col h-[360px] border-2 border-white rounded-xl p-4">
+          <h2 className="font-bold text-2xl mb-6 text-white">Tone: Spielerstimmung</h2>
           <div className="flex-1">
             {toneData ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getToneBarData()} layout="vertical">
-                  <XAxis type="number" domain={[0, 100]} />
-                  <YAxis type="category" dataKey="tone" width={120} />
-                  <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
-                  <Legend />
-                  <Bar dataKey="rot" fill="#EF4444" name="Spieler Rot" />
+                <BarChart
+                  data={getToneBarData()}
+                  layout="vertical"
+                  margin={{ top: 20, right: 20, bottom: 40, left: 20 }}
+                >
+                  <XAxis
+                    type="number"
+                    domain={[0, 100]}
+                    tick={{ fill: "white" }}
+                    axisLine={{ stroke: "white" }}
+                    tickLine={{ stroke: "white" }}
+                    label={{ value: "Prozent (%)", position: "insideBottom", fill: "white", offset: -10 }}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="tone"
+                    width={120}
+                    tick={{ fill: "white" }}
+                    axisLine={{ stroke: "white" }}
+                    tickLine={{ stroke: "white" }}
+                  />
+                  <Tooltip
+                    formatter={(v: number) => `${v.toFixed(1)}%`}
+                    contentStyle={{ backgroundColor: "#1f2937", color: "white", borderRadius: "4px" }}
+                  />
+                  <Legend verticalAlign="top" wrapperStyle={{ color: "white" }} />
+                  <Bar dataKey="rot" fill="#DC0000" name="Spieler Rot" />
                   <Bar dataKey="blau" fill="#3B82F6" name="Spieler Blau" />
                 </BarChart>
               </ResponsiveContainer>
@@ -187,17 +200,15 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* ──────────────────────────────── */}
-        {/* OBERES RECHTES FELD: PHASEN */}
-        {/* ──────────────────────────────── */}
-        <div className="bg-white rounded-xl p-6 shadow-md flex flex-col overflow-auto">
-          <h2 className="font-bold text-2xl mb-6">Phasen-Übersicht</h2>
+        {/* Oben rechts: Phasen */}
+        <div className="flex flex-col overflow-auto h-[360px] border-2 border-white rounded-xl p-4">
+          <h2 className="font-bold text-2xl mb-6 text-white">Phasen-Übersicht</h2>
           {phaseData ? (
             <div className="flex-1 overflow-auto">
-              <div className="mb-6 p-4 bg-gray-100 rounded-lg">
-                <p className="text-lg">
+              <div className="mb-6 p-4 bg-gray-700 rounded-lg">
+                <p className="text-lg text-white">
                   <span className="font-semibold">Gesamtdauer:</span>{" "}
-                  {phaseData.total_formatted} ({phaseData.total_seconds}s)
+                  {phaseData.total_formatted}
                 </p>
               </div>
 
@@ -205,61 +216,99 @@ export function DashboardPage() {
                 {Object.entries(phaseData.phases).map(([phaseName, data], idx) => (
                   <div
                     key={phaseName}
-                    className="p-5 rounded-lg shadow-sm border-l-4"
+                    className="p-5 rounded-lg border-l-4 overflow-hidden bg-gray-700"
                     style={{ borderLeftColor: colors[idx % colors.length] }}
                   >
-                    <h3 className="font-bold text-lg mb-3">{phaseName}</h3>
-                    <p>Dauer: {data.formatted}</p>
-                    <p>Sekunden: {data.seconds}s</p>
-                    <p>Anteil: {data.percentage.toFixed(1)}%</p>
+                    <h3 className="font-bold text-lg mb-3 break-words text-white">{phaseName}</h3>
+                    <p className="text-white">Dauer: {data.formatted}</p>
+                    <p className="text-white">Anteil: {data.percentage.toFixed(1)}%</p>
                   </div>
                 ))}
               </div>
             </div>
           ) : <p>Lade Daten...</p>}
         </div>
+      </div>
 
-        {/* ──────────────────────────────── */}
-        {/* UNTEN LINKS: QUALITY CHART  */}
-        {/* ──────────────────────────────── */}
-        <div className="bg-white rounded-xl p-6 shadow-md flex flex-col">
-          <h2 className="font-bold mb-4">Quality-Verteilung (Stacked)</h2>
+      {/* ── Untere Reihe ── */}
+      <div className="grid grid-cols-[2fr_3fr] gap-12 max-w-7xl mx-auto">
+        {/* Unten links: Quality Chart */}
+        <div className="flex flex-col h-[320px] border-2 border-white rounded-xl p-4">
+          <h2 className="font-bold text-2xl mb-6 text-white">Qualität der Argumente</h2>
           <div className="flex-1">
             {qualityData ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getQualityStackedData()}>
-                  <XAxis type="category" dataKey="player" />
-                  <YAxis type="number" domain={[0, 100]} />
-                  <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
-                  <Legend />
-                  {Object.keys(qualityData.red_arguments.quality).map((quality, idx) => (
-                    <Bar
-                      key={quality}
-                      dataKey={quality}
-                      stackId="a"
-                      fill={qualityColors[quality] || colors[idx % colors.length]}
-                      name={quality}
-                    />
-                  ))}
+                <BarChart 
+                  data={getQualityStackedData()}
+                  margin={{ top: 30, right: 20, bottom: 20, left: 85 }}
+                >
+                  <XAxis 
+                    type="category" 
+                    dataKey="player"
+                    tick={{ fill: "white" }}
+                    axisLine={{ stroke: "white" }}
+                    tickLine={{ stroke: "white" }}
+                  />
+                  <YAxis 
+                    type="number" 
+                    domain={[0, 100]}
+                    tick={{ fill: "white" }}
+                    axisLine={{ stroke: "white" }}
+                    tickLine={{ stroke: "white" }}
+                    label={{ value: "Prozent (%)", angle: -90, position: "center", fill: "white", dx: -25 }}
+                  />
+                  <Tooltip 
+                    formatter={(v: number) => `${v.toFixed(1)}%`}
+                    contentStyle={{ backgroundColor: "#1f2937", color: "white", borderRadius: "4px" }}
+                  />
+                  <Legend 
+                    verticalAlign="top" 
+                    wrapperStyle={{ color: "white", paddingBottom: "20px" }}
+                    payload={[
+                      { value: "Stark", type: "rect", color: "#10B981" },
+                      { value: "Mittel", type: "rect", color: "#F59E0B" },
+                      { value: "Schwach", type: "rect", color: "#EF4444" }
+                    ]}
+                  />
+                  <Bar dataKey="stark" stackId="a" fill="#10B981" name="Stark" />
+                  <Bar dataKey="mittel" stackId="a" fill="#F59E0B" name="Mittel" />
+                  <Bar dataKey="schwach" stackId="a" fill="#EF4444" name="Schwach" />
                 </BarChart>
               </ResponsiveContainer>
             ) : <p>Lade Daten...</p>}
           </div>
         </div>
 
-        {/* ──────────────────────────────── */}
-        {/* UNTEN RECHTS: SPEAKER CHART */}
-        {/* ──────────────────────────────── */}
-        <div className="bg-white rounded-xl p-6 shadow-md flex flex-col">
-          <h2 className="font-bold mb-4">Redeanteile der Speaker</h2>
+        {/* Unten rechts: Speaker Chart */}
+        <div className="flex flex-col h-[320px] border-2 border-white rounded-xl p-4">
+          <h2 className="font-bold text-2xl mb-6 text-white">Redeanteile der Speaker</h2>
           <div className="flex-1">
             {speakerData ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getSpeakerStackedData()} layout="vertical">
-                  <XAxis type="number" domain={[0, 100]} />
-                  <YAxis type="category" dataKey="label" hide />
-                  <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
-                  <Legend />
+                <BarChart 
+                  data={getSpeakerStackedData()} 
+                  layout="vertical"
+                  margin={{ top: 20, right: 20, bottom: 50, left: 20 }}
+                  barSize={40}
+                >
+                  <XAxis 
+                    type="number" 
+                    domain={[0, 100]}
+                    tick={{ fill: "white" }}
+                    axisLine={{ stroke: "white" }}
+                    tickLine={{ stroke: "white" }}
+                    label={{ value: "Prozent (%)", position: "insideBottom", fill: "white", offset: -35 }}
+                  />
+                  <YAxis 
+                    type="category" 
+                    dataKey="label" 
+                    hide 
+                  />
+                  <Tooltip 
+                    formatter={(v: number) => `${v.toFixed(1)}%`}
+                    contentStyle={{ backgroundColor: "#1f2937", color: "white", borderRadius: "4px" }}
+                  />
+                  <Legend verticalAlign="top" wrapperStyle={{ color: "white" }} />
                   {Object.keys(speakerData.speakers).map((speaker, idx) => (
                     <Bar
                       key={speaker}
@@ -274,7 +323,6 @@ export function DashboardPage() {
             ) : <p>Lade Daten...</p>}
           </div>
         </div>
-
       </div>
     </div>
   );

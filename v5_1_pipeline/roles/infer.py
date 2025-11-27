@@ -13,7 +13,7 @@ def infer_roles(utts: List[Utterance]) -> Dict[int, str]:
 
     # 1. Moderator erkennen
     moderator_keywords = {
-        "hallo", "willkommen", "guten abend", "guten tag",
+        "hallo", "willkommen", "guten morgen", "guten tag",
         "als nächstes", "weiter gehts", "jetzt machen wir"
     }
 
@@ -30,8 +30,8 @@ def infer_roles(utts: List[Utterance]) -> Dict[int, str]:
         roles[moderator_id] = "Moderator"
 
     # 2. Teams erkennen (Rot vs Blau)
-    red_keywords = {"rot", "angreifer", "wir greifen an"}
-    blue_keywords = {"blau", "verteidiger", "wir verteidigen"}
+    red_keywords = {"rot", "angreifer", "wir greifen an", "gegner", "sabotieren"}
+    blue_keywords = {"blau", "verteidiger", "wir verteidigen", "abwehren", "abzuwehren"}
 
     for spk, lines in texts_by_spk.items():
         if spk == moderator_id:

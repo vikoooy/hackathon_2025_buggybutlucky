@@ -25,7 +25,6 @@ def run_coarse_diarization(
 
     pipeline = Pipeline.from_pretrained(
         "pyannote/speaker-diarization-community-1",
-        use_auth_token=token,
     )
 
     if torch.cuda.is_available():

@@ -27,7 +27,7 @@ def main():
     parser = argparse.ArgumentParser(description="v5.1 transcription + diarization pipeline")
     parser.add_argument("audio", type=str)
     parser.add_argument("-o", "--output", type=str, default=None)
-    parser.add_argument("--hf-token", type=str, default="INPUT TOKEN HERE")
+    parser.add_argument("--hf-token", type=str, default="INSERT TOKEN HERE")
     parser.add_argument("--whisper-model", type=str, default="large-v3")
     args = parser.parse_args()
 
@@ -62,16 +62,18 @@ def main():
     utts = merge_words_to_utterances(words, labels)
     logging.info("Erzeugte %d Utterances.", len(utts))
 
-    # 8. Normalize
-    utts_norm = normalize_utterances(utts)
-    logging.info("Normalisierung abgeschlossen.")
+    # # 8. Normalize
+    # utts_norm = normalize_utterances(utts)
+    # logging.info("Normalisierung abgeschlossen.")
 
     # 9. Roles
-    roles = infer_roles(utts_norm)
+    # roles = infer_roles(utts_norm)
+    roles = infer_roles(utts)
     logging.info("Rollen erkannt: %s", roles)
 
     # 10. Format Output
-    txt = format_output(utts_norm, roles)
+    # txt = format_output(utts_norm, roles)
+    txt = format_output(utts, roles)
 
     if args.output:
         with open(args.output, "w", encoding="utf8") as f:

@@ -46,10 +46,10 @@ return (
       </div>
     </div>
 
-    {/* Grid Container */}
+    {/* 2-Spalten Layout */}
     <div className="grid grid-cols-3 gap-16 max-w-6xl w-full">
 
-      {/* Upload Box */}
+      {/* Upload Box (linke Spalte) */}
       <div className="col-span-1 flex items-center justify-center">
         <div
           className="
@@ -100,35 +100,50 @@ return (
         </div>
       </div>
 
-      {/* Right Side Buttons */}
+      {/* Buttons rechts – jetzt nur 2 und vertikal aligned */}
       <div className="col-span-2 flex flex-col justify-center gap-8 pr-4">
-        {[
-          { label: 'View Dashboard', action: () => navigate('/dashboard') },
-          { label: 'Report', action: generatePdfReport },
-          { label: 'View X', action: () => navigate('/view-x') },
-        ].map((btn, i) => (
-          <button
-            key={i}
-            className="
-              h-24
-              backdrop-blur-2xl
-              bg-white/10
-              border border-white/20
-              rounded-3xl
-              shadow-[0_8px_32px_rgba(0,0,0,0.35)]
-              hover:bg-white/15
-              text-white
-              text-xl
-              font-semibold
-              transition
-            "
-            onClick={btn.action}
-          >
-            {btn.label}
-          </button>
-        ))}
-      </div>
 
+        {/* View Dashboard */}
+        <button
+          className="
+            h-24
+            backdrop-blur-2xl
+            bg-white/10
+            border border-white/20
+            rounded-3xl
+            shadow-[0_8px_32px_rgba(0,0,0,0.35)]
+            hover:bg-white/15
+            text-white
+            text-xl
+            font-semibold
+            transition
+          "
+          onClick={() => navigate('/dashboard')}
+        >
+          View Dashboard
+        </button>
+
+        {/* Report */}
+        <button
+          className="
+            h-24
+            backdrop-blur-2xl
+            bg-white/10
+            border border-white/20
+            rounded-3xl
+            shadow-[0_8px_32px_rgba(0,0,0,0.35)]
+            hover:bg-white/15
+            text-white
+            text-xl
+            font-semibold
+            transition
+          "
+          onClick={generatePdfReport}
+        >
+          Report
+        </button>
+
+      </div>
     </div>
   </div>
 );

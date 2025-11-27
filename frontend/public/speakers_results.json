@@ -1,0 +1,17 @@
+{
+  "total_seconds": 1846,
+  "speakers": {
+    "Speaker 0 (Moderator)": {
+      "seconds": 1048,
+      "percentage": 56.77
+    },
+    "Speaker 1": {
+      "seconds": 584,
+      "percentage": 31.64
+    },
+    "Speaker 2": {
+      "seconds": 214,
+      "percentage": 11.59
+    }
+  }
+}

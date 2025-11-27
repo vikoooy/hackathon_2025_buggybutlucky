@@ -1,0 +1,444 @@
+{
+  "game_metadata": {
+    "game_id": "Op4C_Hackathon_R1",
+    "date": "2024-01-01",
+    "duration_minutes": 19,
+    "participants": {
+      "team_red": {
+        "players": [
+          "Clara"
+        ],
+        "role": "Angreifer"
+      },
+      "team_blue": {
+        "players": [
+          "Antonio"
+        ],
+        "role": "Verteidiger"
+      },
+      "game_master": {
+        "name": "Moderator"
+      }
+    },
+    "scenario": {
+      "target": "Hackathon der BWI",
+      "red_objective": "Störung und Sabotage des Hackathons durch Verwirrung der Teilnehmer",
+      "blue_objective": "Verteidigung und Durchführung des Hackathons"
+    }
+  },
+  "rounds": [
+    {
+      "round_number": 1,
+      "timestamp_start": "00:00",
+      "timestamp_end": "19:00",
+      "phase_1_aufklaerung": {
+        "phase_name": "Aufklärung (Spionage)",
+        "timestamp_start": "03:14",
+        "timestamp_end": "04:35",
+        "description": "Rot betreibt Spionage um Schwachstellen zu identifizieren, Blau versucht zu kontern",
+        "blue_counter_intelligence": {
+          "what_is_rolled": "Blau würfelt 3W6 und versucht >= 12 zu erreichen um Rot's Spionage zu erkennen",
+          "dice_results": [
+            3,
+            4,
+            3
+          ],
+          "total": 10,
+          "threshold": 12,
+          "success": false,
+          "what_happened": "Blau konnte die Spionage nicht aufdecken",
+          "visibility_consequence": "Spionage bleibt geheim",
+          "transcript_quote": "03:29–03:31 Speaker 0 (Moderator): 'Eine 10 gewürfelt, Pech gehabt, nicht geklappt.'"
+        },
+        "red_espionage": {
+          "what_is_rolled": "Rot würfelt 2W6 um Qualität und Art der Intelligence zu bestimmen",
+          "dice_results": [
+            1
+          ],
+          "intelligence_gained": {
+            "vulnerabilities_identified": [
+              "Nachlässiger Umgang mit Laptop-Sicherheit durch Christian"
+            ],
+            "information_obtained": "Kein direkter Vorteil durch Würfelwurf, aber Kenntnis über Christians Verhaltensmuster",
+            "how_exploited_later": "Ausnutzung der Laptop-Zugänglichkeit für E-Mail-Versand"
+          },
+          "visibility": "geheim",
+          "transcript_quote": "04:08–04:13 Speaker 0 (Moderator): 'Okay, das heißt, du hast gar keinen Vorteil.'"
+        }
+      },
+      "phase_2_angriff": {
+        "phase_name": "Angriff (Diskussionsgefecht)",
+        "timestamp_start": "04:35",
+        "timestamp_end": "18:59",
+        "description": "Rot führt Angriff durch, beide Teams diskutieren entlang 4 Dimensionen",
+        "attack_announcement": {
+          "category_revealed": "Cyber",
+          "target": "Hackathon-Kommunikation",
+          "method": "Versenden falscher Standortinformationen über kompromittierten Mail-Account",
+          "how_intelligence_exploited": "Ausnutzung der beobachteten Nachlässigkeit beim Sperren des Laptops",
+          "transcript_quote": "05:11–05:17 Speaker 1: 'Aufgrund von Unnachsichtigkeit konnte ich an die Mail-Zugangsdaten von dem Organisator Christian gelangen.'"
+        },
+        "dimension_1_resources": {
+          "dimension_name": "Ressourcen (Kosten/Aufwand für Rot)",
+          "red_arguments": [
+            {
+              "argument": "Minimaler Ressourcenaufwand durch vorhandenen Innentäter",
+              "reasoning": "Nur Beobachtung und Timing nötig, keine technischen Ressourcen",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "07:41–07:47 Speaker 1: 'Ich musste einfach nur sehr gut aufpassen und im richtigen Moment am richtigen Ort sein.'",
+              "timestamp": "07:41"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Aufwand für Observation und Timing",
+              "reasoning": "Mehrere Variablen müssen stimmen",
+              "quality": "schwach",
+              "tone": "analytical",
+              "transcript_quote": "07:53–08:02 Speaker 2: 'Aber wie wahrscheinlich ist es denn, dass er wirklich seinen Laptop anlässt?'",
+              "timestamp": "07:53"
+            }
+          ],
+          "game_master_rating": "S",
+          "points_for_red": 1,
+          "rationale": "Minimaler Ressourcenaufwand durch vorhandenen Innentäter"
+        },
+        "dimension_2_complexity": {
+          "dimension_name": "Komplexität (Schwierigkeit für Rot)",
+          "red_arguments": [
+            {
+              "argument": "Durch Vorbeobachtung bekannte Verhaltensmuster",
+              "reasoning": "Reduziert Komplexität durch Vorhersagbarkeit",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "13:28–13:31 Speaker 1: 'Ich kenne seine Muster, wie er unterwegs ist.'",
+              "timestamp": "13:28"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Viele unvorhersehbare Variablen",
+              "reasoning": "Zeitdruck und mögliche Störungen beim Mail-Versand",
+              "quality": "stark",
+              "tone": "analytical",
+              "transcript_quote": "13:43–13:52 Speaker 2: 'Die E-Mail muss ja auch erstmal geschrieben werden... Weil so eine E-Mail zu verfassen, die dann auch authentisch ist, das dauert ja ein bisschen.'",
+              "timestamp": "13:43"
+            }
+          ],
+          "game_master_rating": "M",
+          "points_for_red": 2,
+          "rationale": "Moderate Komplexität durch Timing und Koordination"
+        },
+        "dimension_3_defense": {
+          "dimension_name": "Verteidigung (Qualität von Blau's Maßnahmen)",
+          "red_arguments": [
+            {
+              "argument": "Weiche Faktoren bei Sicherheitsmaßnahmen",
+              "reasoning": "Abhängig von individueller Umsetzung",
+              "quality": "moderat",
+              "tone": "analytical",
+              "transcript_quote": "12:03–12:05 Speaker 1: 'Das sind aber halt sehr weiche Faktoren, würde ich sagen.'",
+              "timestamp": "12:03"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Mehrheit der Mitarbeiter sperrt Laptops und nutzt PKI-Karten",
+              "reasoning": "Etablierte Sicherheitskultur",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "12:36–12:48 Speaker 2: 'Wenn ich mich auch so bei meinen Arbeitskollegen umschaue, dass man nicht nur den Laptop sperrt, sondern auch die PKI-Karte mitnimmt.'",
+              "timestamp": "12:36"
+            }
+          ],
+          "game_master_rating": "L",
+          "points_for_red": 3,
+          "rationale": "Gute Verteidigungsmaßnahmen und Sicherheitskultur vorhanden"
+        },
+        "dimension_4_attack": {
+          "dimension_name": "Auswirkung (Schadenspotenzial)",
+          "red_arguments": [
+            {
+              "argument": "Massive Verwirrung und Frustration bei Teilnehmern",
+              "reasoning": "Teilnehmer an verschiedenen Standorten, Chaos beim Start",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "06:02–06:13 Speaker 1: 'Am Montag, also wenn der Hackathon dann startet, merkt das Organisationsteam, dass die Teilnehmer an verschiedenen Standorten sind.'",
+              "timestamp": "06:02"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Zeitfenster für Entdeckung vorhanden",
+              "reasoning": "Mehrere Tage bis zur vollen Wirkung",
+              "quality": "moderat",
+              "tone": "analytical",
+              "transcript_quote": "16:12–16:15 Speaker 1: 'Also, der unvermeidbare Schaden ist erst montags.'",
+              "timestamp": "16:12"
+            }
+          ],
+          "game_master_rating": "M",
+          "points_for_red": 2,
+          "rationale": "Spürbarer aber nicht katastrophaler Schaden"
+        },
+        "success_roll": {
+          "threshold": 8,
+          "dice_results": [
+            3,
+            4,
+            3
+          ],
+          "dice_total": 10,
+          "success": true,
+          "margin": 2,
+          "result_type": "Knapper Erfolg (Margin 0-2)",
+          "what_happened": "Angreifer konnte erfolgreich falsche Standortinformationen versenden",
+          "transcript_quote": "17:43–17:45 Speaker 1: 'Ah, ich habe eine 10 gewürfelt.'"
+        }
+      }
+    },
+    {
+      "round_number": 2,
+      "timestamp_start": "19:03",
+      "timestamp_end": "32:46",
+      "phase_1_aufklaerung": {
+        "phase_name": "Aufklärung (Spionage)",
+        "timestamp_start": "19:03",
+        "timestamp_end": "20:35",
+        "description": "Rot spioniert für zweiten Angriff, Blau versucht Aufklärung zu verhindern",
+        "blue_counter_intelligence": {
+          "what_is_rolled": "Blau würfelt 3W6 für Counter-Intelligence",
+          "dice_results": [
+            5
+          ],
+          "total": 5,
+          "threshold": 12,
+          "success": false,
+          "what_happened": "Blau konnte die Spionage nicht aufdecken",
+          "visibility_consequence": "Spionage bleibt geheim",
+          "transcript_quote": "Ich habe leider eine 5 gewürfelt."
+        },
+        "red_espionage": {
+          "what_is_rolled": "Rot würfelt 2W6 für Aufklärungsqualität",
+          "dice_results": [
+            5,
+            4
+          ],
+          "intelligence_gained": {
+            "vulnerabilities_identified": [
+              "Gebäudepläne mit Wasserleitungen",
+              "Zugänglichkeit der Hauptwasserleitung"
+            ],
+            "information_obtained": "Standortdetails und Infrastruktur-Schwachstellen",
+            "how_exploited_later": "Innentäter nutzt Informationen für gezielten Wasserrohrbruch"
+          },
+          "visibility": "geheim",
+          "transcript_quote": "X-Achse ist eine 5... und jetzt mal die Y-Achse... Das ist eine 4."
+        }
+      },
+      "phase_2_angriff": {
+        "phase_name": "Angriff (Diskussionsgefecht)",
+        "timestamp_start": "21:04",
+        "timestamp_end": "31:53",
+        "description": "Physischer Angriff auf Wasserinfrastruktur",
+        "attack_announcement": {
+          "category_revealed": "Klassisch",
+          "target": "Hauptwasserleitung des Veranstaltungsgebäudes",
+          "method": "Innentäter verschafft sich Zugang und beschädigt Wasserleitung",
+          "how_intelligence_exploited": "Nutzt Gebäudepläne und Insiderwissen für gezielten Zugang",
+          "transcript_quote": "Als Inentäter auf die Veranstaltung, hat entsprechende Materialien vor Ort mitgenommen, kennt das Gebäude, in dem der Hackathon ausgetragen wird und verschafft sich Zugang zur Hauptwasserleitung."
+        },
+        "dimension_1_resources": {
+          "dimension_name": "Ressourcen (Kosten/Aufwand für Rot)",
+          "red_arguments": [
+            {
+              "argument": "Für einen staatlichen Akteur mit Geldressourcen und Kontakten ist es machbar",
+              "reasoning": "Staatliche Ressourcen ermöglichen Zugang zu notwendigen Mitteln",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "Für einen staatlichen Akteur, der viele Geldressourcen hat und Kontakte hat, ist es aber durchaus machbar",
+              "timestamp": "22:54"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Problematische Beschaffung der Gebäudepläne erfordert erhebliche Ressourcen",
+              "reasoning": "Zugang zu geschützten Informationen benötigt signifikante Mittel",
+              "quality": "moderat",
+              "tone": "analytical",
+              "transcript_quote": "Ich sehe das auch so, dass es erstmal ein Problem ist, an die Pläne zu kommen",
+              "timestamp": "23:28"
+            }
+          ],
+          "game_master_rating": "M",
+          "points_for_red": 2,
+          "rationale": "Moderater Ressourcenaufwand für staatlichen Akteur, basierend auf Übereinstimmung beider Teams"
+        },
+        "dimension_2_defense": {
+          "dimension_name": "Verteidigung (Qualität von Blau's Maßnahmen)",
+          "red_arguments": [
+            {
+              "argument": "Verteidigung ist grundsätzlich schwach",
+              "reasoning": "Unsicherheit über Geheimhaltung der Gebäudepläne",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "Also prinzipiell würde ich sagen, dass die Verteidigung da schon eher schwach ist",
+              "timestamp": "27:09"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Auch BWI-seitig schwache Verteidigung",
+              "reasoning": "Bestätigung der Schwachstellen in der Gebäudesicherheit",
+              "quality": "schwach",
+              "tone": "analytical",
+              "transcript_quote": "Ich glaube auch, dass es BWI-seitig eine schwache Verteidigung ist",
+              "timestamp": "27:24"
+            }
+          ],
+          "game_master_rating": "M",
+          "points_for_red": 2,
+          "rationale": "Grundlegende aber nicht effiziente Verteidigungsmaßnahmen wie Rezeption vorhanden"
+        },
+        "dimension_3_complexity": {
+          "dimension_name": "Komplexität (Schwierigkeit für Rot)",
+          "red_arguments": [
+            {
+              "argument": "Mit Übung und Internetrecherche machbar",
+              "reasoning": "Technische Durchführung ist erlernbar",
+              "quality": "moderat",
+              "tone": "confident",
+              "transcript_quote": "Durch ein bisschen Übung vorab oder durch Internetrecherche, wie man sowas tut, denke ich, ist jeder dazu in der Lage, das durchzuführen",
+              "timestamp": "24:45"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Viele unkontrollierbare Variablen und verdächtiges Equipment",
+              "reasoning": "Logistische Herausforderungen und Entdeckungsrisiko",
+              "quality": "stark",
+              "tone": "analytical",
+              "transcript_quote": "Ich sehe auch hier nochmal viele Variablen, die halt mit drin sind, die man nicht wirklich auch kontrollieren kann",
+              "timestamp": "25:09"
+            }
+          ],
+          "game_master_rating": "L",
+          "points_for_red": 3,
+          "rationale": "Hohe Komplexität durch multiple Variablen und Koordinationsbedarf, durch Würfelentscheidung (5 vs 2) bestätigt"
+        },
+        "dimension_4_attack": {
+          "dimension_name": "Auswirkung (Schadenspotenzial)",
+          "red_arguments": [
+            {
+              "argument": "Schnelle Durchführung in 1-1.5 Stunden möglich",
+              "reasoning": "Effiziente Ausführung minimiert Entdeckungsrisiko",
+              "quality": "stark",
+              "tone": "confident",
+              "transcript_quote": "Also, montags morgens rein und dann ein, zwei, also vielleicht eine halbe Stunde, Stunde, bis das Wasser gefunden ist",
+              "timestamp": "29:11"
+            }
+          ],
+          "blue_arguments": [
+            {
+              "argument": "Zustimmung zur kurzen Durchführungszeit",
+              "reasoning": "Realistische Einschätzung der Zeitdauer",
+              "quality": "schwach",
+              "tone": "supportive",
+              "transcript_quote": "Da lasse ich mich gerne drauf ein. Also, ich würde auch eher zu Stunden tendieren",
+              "timestamp": "29:31"
+            }
+          ],
+          "game_master_rating": "S",
+          "points_for_red": 1,
+          "rationale": "Kurzes Angriffszeitfenster von wenigen Stunden"
+        },
+        "success_roll": {
+          "threshold": 8,
+          "dice_results": [
+            6
+          ],
+          "dice_total": 6,
+          "success": false,
+          "margin": -2,
+          "result_type": "Knapper Fehlschlag",
+          "what_happened": "Teilweiser Wasserausbruch, aber schnelle Entdeckung durch Rezeptionsmitarbeiter",
+          "transcript_quote": "Mit einer 6 bekommst du, kommst du die Leute rein, die machen ihr, die machen was an der Pipeline. Wasser fällt aus. Aber in kürzer Zeit erkennt ein Rezeptionsmitarbeiter, der durch die Gegend gerade läuft, als er prüft, dass hier etwas nicht stimmt und dreht davor die Hauptwasserrohre zu."
+        }
+      }
+    }
+  ],
+  "game_summary": {
+    "rounds_overview": [
+      {
+        "round_number": 2,
+        "attack_category": "Klassisch",
+        "attack_successful": false,
+        "key_impact": "Teilweiser Wasserausbruch mit schneller Entdeckung, Hackathon beeinträchtigt aber nicht vollständig gestoppt"
+      }
+    ],
+    "espionage_effectiveness": [
+      {
+        "round_number": 2,
+        "red_intelligence_quality": "hoch",
+        "blue_counter_success": false,
+        "impact_on_attack": "Ermöglichte gezielten Zugang zur Wasserinfrastruktur, aber nicht ausreichend für vollen Erfolg"
+      }
+    ],
+    "defense_measures": {
+      "blue_strengths": [
+        "Aufmerksames Rezeptionspersonal",
+        "Zugang zu Hauptwasserhähnen"
+      ],
+      "blue_weaknesses": [
+        "Schwache Zugangskontrolle",
+        "Unzureichender Schutz der Gebäudepläne"
+      ],
+      "most_effective_defense": "Schnelle Reaktion des Rezeptionspersonals"
+    },
+    "attack_progression": {
+      "red_strategy_evolution": "Von digitaler Manipulation zu physischer Sabotage gewechselt",
+      "most_effective_attack": "Teilweise erfolgreiche Wasserleitungssabotage",
+      "red_weaknesses_exposed": [
+        "Zeitdruck bei der Durchführung",
+        "Sichtbarkeit der Sabotageaktivitäten"
+      ]
+    },
+    "vulnerabilities_identified": [
+      {
+        "vulnerability": "Zugänglichkeit der Wasserleitungen",
+        "exploited_in_round": 2,
+        "effectiveness": "mittel"
+      }
+    ],
+    "lessons_learned": {
+      "for_red_team": [
+        "Bessere Ablenkungsmanöver nötig",
+        "Schnellere Ausführung erforderlich"
+      ],
+      "for_blue_team": [
+        "Verstärkte Zugangskontrolle notwendig",
+        "Besserer Schutz der Infrastrukturpläne"
+      ],
+      "for_game_design": [
+        "Physische Angriffe können trotz einfacher Ausführung an Details scheitern"
+      ]
+    },
+    "key_moments": [
+      {
+        "timestamp": "19:32",
+        "phase": "Aufklärung",
+        "round": 2,
+        "description": "Blau verfehlt Counter-Intelligence Wurf",
+        "significance": "Ermöglichte Rot verdeckte Aufklärung"
+      },
+      {
+        "timestamp": "30:20",
+        "phase": "Angriff",
+        "round": 2,
+        "description": "Fehlgeschlagener Erfolgswurf führt zu Teilerfolg",
+        "significance": "Verhinderte vollständige Sabotage des Hackathons"
+      }
+    ]
+  }
+}

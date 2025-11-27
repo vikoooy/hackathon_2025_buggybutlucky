@@ -1,0 +1,47 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:80"
+    environment:
+      - TRANSCRIPTION_SERVICE_URL=http://transcription:8001
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    depends_on:
+      transcription:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - transcripts-data:/app/data/transcripts
+
+  transcription:
+    build: ./transcription_pipeline.py
+    ports:
+      - "8001:8001"
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - HUGGINGFACE_TOKEN=${HF_TOKEN}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    # Volumes for model caching (optional, speeds up restarts)
+    volumes:
+      - huggingface-cache:/root/.cache/huggingface
+      - whisper-cache:/root/.cache/whisper
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  huggingface-cache:
+  whisper-cache:
+  transcripts-data:

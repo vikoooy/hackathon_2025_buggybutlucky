@@ -1,30 +1,27 @@
 import asyncio
 import os
-import tempfile
 import uuid
+from pathlib import Path
 from typing import Dict
 
+import httpx
 from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 
 from ..services.pipeline_service import PipelineService
 
-# v5_1_pipeline imports
-from v5_1_pipeline.asr.transcribe import run_transcription_words
-from v5_1_pipeline.diarization.vad import run_vad
-from v5_1_pipeline.diarization.coarse import run_coarse_diarization
-from v5_1_pipeline.diarization.embeddings import compute_word_embeddings
-from v5_1_pipeline.diarization.clustering import cluster_embeddings_ahc
-from v5_1_pipeline.diarization.smoothing import smooth_labels_combined
-from v5_1_pipeline.diarization.merge import merge_words_to_utterances
-from v5_1_pipeline.text.normalize import normalize_utterances
-from v5_1_pipeline.roles.infer import infer_roles
-from v5_1_pipeline.utils import fmt_time
+# Transcript-Speicherort
+TRANSCRIPTS_DIR = Path(__file__).parent.parent.parent / "data" / "transcripts"
+TRANSCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
 
 router = APIRouter(
     prefix="/audio",
     tags=["audio"],
     responses={400: {"description": "Invalid audio upload"}},
 )
+
+# Transcription Service URL (containerized service)
+TRANSCRIPTION_SERVICE_URL = os.environ.get("TRANSCRIPTION_SERVICE_URL", "http://localhost:8001")
 
 JOBS: Dict[str, Dict] = {}
 JOBS_LOCK = asyncio.Lock()
@@ -50,75 +47,110 @@ async def _get_job(job_id: str) -> Dict | None:
         return JOBS.get(job_id)
 
 
-def _format_output(utts, roles):
-    """Formatiert die Utterances als lesbaren Text mit Timestamps und Rollen."""
-    lines = []
-    for u in utts:
-        ts = fmt_time(u.start)
-        role = roles.get(u.speaker_id, "Unknown")
-        lines.append(f"{ts} Speaker {u.speaker_id} ({role}): \"{u.text}\"")
-    return "\n".join(lines)
-
-
 async def process_audio_bytes(job_id: str, file_name: str, payload: bytes) -> None:
-    """Verarbeitet Audio-Bytes durch die v5_1_pipeline mit Progress-Updates, dann Pipeline."""
-    tmp_path = None
-    hf_token = os.environ.get("HF_TOKEN")
+    """Verarbeitet Audio via Transcription Service (HTTP), dann Analysis Pipeline."""
 
     try:
-        # Temporäre Datei erstellen
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-            tmp.write(payload)
-            tmp_path = tmp.name
+        # === TRANSKRIPTION VIA HTTP (0-70%) ===
+        async with httpx.AsyncClient(timeout=httpx.Timeout(600.0, connect=30.0)) as client:
+            # 1. Job beim Transcription Service starten
+            await _set_job(
+                job_id,
+                status="processing",
+                progress=2,
+                step="upload",
+                step_name="Sende an Transcription Service...",
+                phase="transcription"
+            )
 
-        # === TRANSKRIPTION (0-70%) ===
+            files = {"file": (file_name, payload, "audio/wav")}
+            try:
+                response = await client.post(
+                    f"{TRANSCRIPTION_SERVICE_URL}/transcribe",
+                    files=files
+                )
+                response.raise_for_status()
+            except httpx.ConnectError:
+                raise Exception(f"Transcription Service nicht erreichbar: {TRANSCRIPTION_SERVICE_URL}")
+            except httpx.HTTPStatusError as e:
+                raise Exception(f"Transcription Service Fehler: {e.response.text}")
 
-        # Step 1: ASR (Whisper Transkription) - 7%
-        await _set_job(job_id, status="processing", progress=7, step="asr",
-                       step_name="Transkription läuft...", phase="transcription")
-        words = run_transcription_words(tmp_path, model_name="large-v3")
+            transcription_job_id = response.json()["job_id"]
 
-        # Step 2: VAD (Voice Activity Detection) - 14%
-        await _set_job(job_id, progress=14, step="vad", step_name="Voice Activity Detection...")
-        vad_segments = run_vad(tmp_path, hf_token=hf_token)
+            await _set_job(
+                job_id,
+                progress=5,
+                step="transcription_started",
+                step_name="Transcription gestartet..."
+            )
 
-        # Step 3: Coarse Speaker Diarization - 21%
-        await _set_job(job_id, progress=21, step="diarization", step_name="Speaker Diarization...")
-        coarse_segments = run_coarse_diarization(tmp_path, hf_token=hf_token)
+            # 2. Status pollen bis fertig
+            while True:
+                await asyncio.sleep(2)
 
-        # Step 4: Word Embeddings berechnen - 32%
-        await _set_job(job_id, progress=32, step="embeddings", step_name="Berechne Speaker Embeddings...")
-        embeddings = compute_word_embeddings(words, tmp_path)
+                try:
+                    status_response = await client.get(
+                        f"{TRANSCRIPTION_SERVICE_URL}/status/{transcription_job_id}"
+                    )
+                    status_response.raise_for_status()
+                except httpx.HTTPStatusError:
+                    raise Exception("Fehler beim Abrufen des Transcription-Status")
 
-        # Step 5: Clustering - 39%
-        await _set_job(job_id, progress=39, step="clustering", step_name="Clustering Sprecher...")
-        raw_labels = cluster_embeddings_ahc(embeddings, coarse_segments, words)
+                status_data = status_response.json()
 
-        # Step 6: Label Smoothing - 46%
-        await _set_job(job_id, progress=46, step="smoothing", step_name="Label Smoothing...")
-        labels = smooth_labels_combined(words, raw_labels)
+                # Progress weiterleiten (0-70% für Transcription)
+                transcription_progress = status_data.get("progress", 0)
+                overall_progress = int(transcription_progress * 0.7)
 
-        # Step 7: Merge Words to Utterances - 53%
-        await _set_job(job_id, progress=53, step="merge", step_name="Erstelle Utterances...")
-        utterances = merge_words_to_utterances(words, labels)
+                step_name_map = {
+                    "load": "Audio wird geladen...",
+                    "transcription": "Whisper Transkription läuft...",
+                    "diarization": "Speaker Diarization...",
+                    "alignment": "Alignment...",
+                    "roles": "Erkenne Rollen...",
+                    "format": "Formatiere Transkript...",
+                    "done": "Transkription abgeschlossen",
+                }
+                current_step = status_data.get("step", "processing")
+                step_name = step_name_map.get(current_step, f"Verarbeite... ({current_step})")
 
-        # Step 8: Text Normalization - 60%
-        await _set_job(job_id, progress=60, step="normalize", step_name="Normalisiere Text...")
-        normalized_utterances = normalize_utterances(utterances)
+                await _set_job(
+                    job_id,
+                    progress=overall_progress,
+                    step=f"transcription_{current_step}",
+                    step_name=step_name
+                )
 
-        # Step 9: Role Inference - 67%
-        await _set_job(job_id, progress=67, step="roles", step_name="Erkenne Rollen...")
-        roles = infer_roles(normalized_utterances)
+                if status_data["status"] == "completed":
+                    break
+                elif status_data["status"] == "failed":
+                    error_msg = status_data.get("error", "Transcription fehlgeschlagen")
+                    raise Exception(error_msg)
 
-        # Step 10: Format Output - 70%
-        transcript = _format_output(normalized_utterances, roles)
+            # 3. Ergebnis holen
+            try:
+                result_response = await client.get(
+                    f"{TRANSCRIPTION_SERVICE_URL}/result/{transcription_job_id}"
+                )
+                result_response.raise_for_status()
+            except httpx.HTTPStatusError as e:
+                raise Exception(f"Fehler beim Abrufen des Transkripts: {e.response.text}")
+
+            transcript = result_response.json()["transcript"]
+
+        # Transcript als Datei speichern
+        transcript_path = TRANSCRIPTS_DIR / f"{job_id}.txt"
+        with open(transcript_path, "w", encoding="utf-8") as f:
+            f.write(transcript)
+
         await _set_job(
             job_id,
             progress=70,
             step="transcription_done",
             step_name="Transkription abgeschlossen",
             phase="analysis",
-            transcript=transcript
+            transcript=transcript,
+            transcript_path=str(transcript_path)
         )
 
         # === DATA PROCESSING PIPELINE (70-100%) ===
@@ -159,12 +191,6 @@ async def process_audio_bytes(job_id: str, file_name: str, payload: bytes) -> No
 
     except Exception as exc:
         await _set_job(job_id, status="failed", error=str(exc))
-    finally:
-        # Temporäre Datei löschen
-        if tmp_path and os.path.exists(tmp_path):
-            os.unlink(tmp_path)
-        # Payload freigeben
-        del payload
 
 
 @router.post("/upload")
@@ -209,6 +235,20 @@ async def get_report(job_id: str):
         "job_id": job_id,
         "status": job["status"],
         "transcript": job.get("result"),
+        "transcript_path": job.get("transcript_path"),
         "reports": job.get("reports"),
         "pipeline_error": job.get("pipeline_error")
     }
+
+
+@router.get("/transcript/{job_id}")
+async def download_transcript(job_id: str):
+    """Download transcript as .txt file."""
+    transcript_path = TRANSCRIPTS_DIR / f"{job_id}.txt"
+    if not transcript_path.exists():
+        raise HTTPException(status_code=404, detail="Transcript not found")
+    return FileResponse(
+        transcript_path,
+        media_type="text/plain",
+        filename=f"transcript_{job_id}.txt"
+    )
